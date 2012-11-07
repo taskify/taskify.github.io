@@ -387,6 +387,7 @@
     ev.stopImmediatePropagation();
   }
   $(document).ready(function() {
+    document.title = document.domain;
     todo.tags.forEach(function(tag) {
       $('#tags').append( displayTag(tag) );
     });
