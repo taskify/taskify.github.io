@@ -300,6 +300,14 @@
           )
         ).append(
             $('<textarea class="item-text">')
+            .click(function(ev) {
+              addPoints();
+            })
+            .keyup(function(ev) {
+              if (ev.which == 13 || ev.which == 8) {
+                addPoints();
+              }
+            })
             .keyup(function(ev) {
               var log = true;
               if(lkp && lkp.target && lkp.which) {
@@ -385,6 +393,20 @@
   function stopEvent(ev) {
     ev.preventDefault();
     ev.stopImmediatePropagation();
+  }
+  function addPoints(points) {
+    score = localStorage.getItem('score');
+    if (!score) score = 0;
+    score = parseInt(score) + 5.0;
+    localStorage.setItem('score', score);
+    mod = score % 25;
+    str = '';  for(i=0; i<mod; i+=5) str += '*';
+    $('#score').html(' Score : ' + (score-mod) + ' ' + str);
+    hook = localStorage.getItem('hook');
+    // add your own hook
+    if ((mod == 0) && hook) {
+      eval(hook);
+    }
   }
   $(document).ready(function() {
     document.title = document.domain;
