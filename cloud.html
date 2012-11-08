@@ -75,7 +75,7 @@
     }
 
     function load(uri) {
-      $.getJSON(uri + '.json', function(data) {   s = (unescape(JSON.stringify(data[window.url + '#1'][window.url + '#todo'][0]['value']))) ; window.localStorage
+      $.getJSON(uri + '.json', function(data) {   s = (unescape(JSON.stringify(data[uri + '#1'][uri + '#todo'][0]['value']))) ; window.localStorage
 .todo = s.substring( 1, s.length-1); window.location.reload(); } );
     }
 
