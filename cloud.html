@@ -1,7 +1,7 @@
 <!DOCTYPE html> 
 <html> 
 <head>
-  <title>Task Tree - Taskify</title>
+  <title>Cloud Setting - Taskify</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet">
@@ -16,7 +16,7 @@
   <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap.min.js" type="text/javascript"></script>
   <script type="text/javascript">
     $(document).ready(function () {
-      var tasks = localStorage.getItem('tasktree');
+      var tasks = localStorage.getItem('workspace');
       if (tasks) {
         tasks = JSON.parse(tasks);
         for (i=0; i<tasks.length; i++) {
@@ -40,7 +40,7 @@
 
 <div class="container-fluid">
   <div class="row-fluid" id="columns">
-    <h2>Task Tree</h2>
+    <h2>Cloud Settings</h2>
   </div>
 </div>
 
