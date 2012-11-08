@@ -410,6 +410,7 @@
   }
   $(document).ready(function() {
     document.title = document.domain;
+
     todo.tags.forEach(function(tag) {
       $('#tags').append( displayTag(tag) );
     });
@@ -426,5 +427,18 @@
       return false;
     });
     $('.sortable').sortable({items:'> .item', handle:'.handle', connectWith:'.sortable', update:function() { resequence() } });
+
+    var script = document.createElement('script');
+    script.src = 'https://data.fm/user.js' + '?callback=displayUser';
+    document.body.appendChild(script);
+
   });
 })(jQuery);
+
+function displayUser(val) {
+  webIDText = document.getElementById('user');
+  webIDText.innerHTML = ' | ' + val;
+  window.user = val;
+  window.url = 'http://todo.data.fm/' + encodeURIComponent(val);
+}
+
