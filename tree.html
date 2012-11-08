@@ -15,12 +15,38 @@
   <script src="http://code.jquery.com/ui/1.9.0/jquery-ui.js" type="text/javascript"></script>
   <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap.min.js" type="text/javascript"></script>
   <script type="text/javascript">
+    function remove(list) {
+      var tasks = localStorage.getItem('tasktree');
+      if (tasks) {
+        tasks = JSON.parse(tasks);
+        for (i=0; i<tasks.length; i++) {
+          if (tasks[i] == list) {
+            tasks.splice(i,1);
+            localStorage.setItem('tasktree', JSON.stringify(tasks));
+            location.reload();
+          }
+        }
+      }
+    }
+    function addtask() {
+      task = $('#add').val();
+      tasks= localStorage.getItem('tasktree');
+      if (tasks) {
+        tasks = JSON.parse(tasks);
+        tasks.push(task);
+        localStorage.setItem('tasktree', JSON.stringify(tasks));
+      } else {
+        localStorage.setItem('tasktree', JSON.stringify([task]));
+      }
+      location.reload();
+      return false;
+    }
     $(document).ready(function () {
       var tasks = localStorage.getItem('tasktree');
       if (tasks) {
         tasks = JSON.parse(tasks);
         for (i=0; i<tasks.length; i++) {
-          $('h2').append('<h3><a href="' + tasks[i] + '">' + tasks[i] +'</a></h3>');
+          $('h2').first().append('<h3><a href="' + tasks[i] + '">' + tasks[i] +'</a> <a href="javascript:remove(\'' +tasks[i]+ '\')">X</a></h3>');
         }
       }
     });
@@ -41,6 +67,7 @@
 <div class="container-fluid">
   <div class="row-fluid" id="columns">
     <h2>Task Tree</h2>
+    <h2><form onSubmit='javascript:return false;'>Add: <input id="add"/><input onclick="javascript:addtask()" type="submit" id="submit" value="Go"/></form></h2>
   </div>
 </div>
 
