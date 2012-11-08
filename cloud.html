@@ -37,6 +37,33 @@
       xhr.send(data);
     }
 
+    function remove(list) {
+      var uris = localStorage.getItem('workspace');
+      if (uris) {
+        uris = JSON.parse(uris);
+        for (i=0; i<uris.length; i++) {
+          if (uris[i] == list) {
+            uris.splice(i,1);
+            localStorage.setItem('workspace', JSON.stringify(uris));
+            location.reload();
+          }
+        }
+      }
+    }
+    function adduri() {
+      uri = $('#add').val();
+      uris= localStorage.getItem('workspace');
+      if (uris) {
+        uris = JSON.parse(uris);
+        uris.push(uri);
+        localStorage.setItem('workspace', JSON.stringify(uris));
+      } else {
+        localStorage.setItem('workspace', JSON.stringify([uri]));
+      }
+      location.reload();
+      return false;
+    }
+
 
     function save(uri) {
       deleteFile(uri);
@@ -48,8 +75,8 @@
     }
 
     function load(uri) {
-      $.getJSON(uri + '.json', function(data) {   s = (unescape(JSON.stringify(data[uri + '#1'][uri + '#todo'][0]['value']))) ; 
-      window.localStorage.todo = s.substring( 1, s.length-1); window.location.reload(); } );
+      $.getJSON(uri + '.json', function(data) {   s = (unescape(JSON.stringify(data[window.url + '#1'][window.url + '#todo'][0]['value']))) ; window.localStorage
+.todo = s.substring( 1, s.length-1); window.location.reload(); } );
     }
 
 
@@ -59,7 +86,7 @@
       if (uris) {
         uris = JSON.parse(uris);
         for (i=0; i<uris.length; i++) {
-          $('h2').append('<h3><a href="' + uris[i] + '">' + uris[i] +'</a> <a href="javascript:save(\''+ uris[i] +'\')">Save</a> <a href="javascript:load(\''+ uris[i] +'\')">Load</a></h3>');
+          $('h2').first().append('<h3><a href="' + uris[i] + '">' + uris[i] +'</a> <a href="javascript:save(\''+ uris[i] +'\')">Save</a> <a href="javascript:load(\''+ uris[i] +'\')">Load</a> <a href="javascript:remove(\''+ uris[i] +'\')">X</a></h3>');
         }
       }
     });
@@ -80,6 +107,7 @@
 <div class="container-fluid">
   <div class="row-fluid" id="columns">
     <h2>Cloud Settings</h2>
+    <h2><form onSubmit='javascript:return false;'>Add: <input id="add"/><input onclick="javascript:adduri()" type="submit" id="submit" value="Go"/></form></h2>
   </div>
 </div>
 
