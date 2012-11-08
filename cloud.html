@@ -38,7 +38,7 @@
     }
 
 
-    function sync(uri) {
+    function save(uri) {
       deleteFile(uri);
       putFile(uri, '<#1> <#todo> "'+ escape(localStorage.todo) +'" .');
       $.ajax({
@@ -47,12 +47,19 @@
       });
     }
 
+    function load(uri) {
+      $.getJSON(uri + '.json', function(data) {   s = (unescape(JSON.stringify(data[uri + '#1'][uri + '#todo'][0]['value']))) ; 
+      window.localStorage.todo = s.substring( 1, s.length-1); window.location.reload(); } );
+    }
+
+
+
     $(document).ready(function () {
       var uris = localStorage.getItem('workspace');
       if (uris) {
         uris = JSON.parse(uris);
         for (i=0; i<uris.length; i++) {
-          $('h2').append('<h3><a href="' + uris[i] + '">' + uris[i] +'</a> <a href="javascript:sync(\''+ uris[i] +'\')">Save</a></h3>');
+          $('h2').append('<h3><a href="' + uris[i] + '">' + uris[i] +'</a> <a href="javascript:save(\''+ uris[i] +'\')">Save</a> <a href="javascript:load(\''+ uris[i] +'\')">Load</a></h3>');
         }
       }
     });
