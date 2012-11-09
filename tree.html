@@ -20,7 +20,7 @@
       if (tasks) {
         tasks = JSON.parse(tasks);
         for (i=0; i<tasks.length; i++) {
-          if (tasks[i] == list) {
+          if (tasks[i]['@id'] == list) {
             tasks.splice(i,1);
             localStorage.setItem('tasktree', JSON.stringify(tasks));
             location.reload();
@@ -28,25 +28,27 @@
         }
       }
     }
+
     function addtask() {
       task = $('#add').val();
       tasks= localStorage.getItem('tasktree');
       if (tasks) {
         tasks = JSON.parse(tasks);
-        tasks.push(task);
+        tasks.push({'@id': task});
         localStorage.setItem('tasktree', JSON.stringify(tasks));
       } else {
-        localStorage.setItem('tasktree', JSON.stringify([task]));
+        localStorage.setItem('tasktree', JSON.stringify([{'@id': task}]));
       }
       location.reload();
       return false;
     }
+
     $(document).ready(function () {
       var tasks = localStorage.getItem('tasktree');
       if (tasks) {
         tasks = JSON.parse(tasks);
         for (i=0; i<tasks.length; i++) {
-          $('h2').first().append('<h3><a href="' + tasks[i] + '">' + tasks[i] +'</a> <a href="javascript:remove(\'' +tasks[i]+ '\')">X</a></h3>');
+          $('h2').first().append('<h3><a href="' + tasks[i]['@id'] + '">' + tasks[i]['@id'] +'</a> <a href="javascript:remove(\'' +tasks[i]['@id']+ '\')">X</a></h3>');
         }
       }
     });
