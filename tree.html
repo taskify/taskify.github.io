@@ -13,6 +13,7 @@
   <![endif]-->
   <script src="http://code.jquery.com/jquery-1.8.2.js" type="text/javascript"></script>
   <script src="http://code.jquery.com/ui/1.9.0/jquery-ui.js" type="text/javascript"></script>
+  <script src="https://raw.github.com/timrwood/moment/1.7.2/min/moment.min.js " type="text/javascript"></script>
   <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap.min.js" type="text/javascript"></script>
   <script type="text/javascript">
     function remove(list) {
@@ -57,7 +58,7 @@
         });
 
         for (i=0; i<tasks.length; i++) {
-          $('h2').first().append('<h3><a href="javascript:remove(\'' +tasks[i]['@id']+ '\')">X</a> <a title="'+ tasks[i]['modified']  +'" href="' + tasks[i]['@id'] + '">' + tasks[i]['@id'] +'</a></h3>');
+          $('h2').first().append('<h3><a href="javascript:remove(\'' +tasks[i]['@id']+ '\')">X</a> <a title="'+ moment(tasks[i]['modified'], "YYYY-MM-DDTHH:mm:ssZ").fromNow()  +'" href="' + tasks[i]['@id'] + '">' + tasks[i]['@id'] +'</a> <small>('+  moment(tasks[i]['modified'], "YYYY-MM-DDTHH:mm:ssZ").fromNow()  +')</small></h3>');
         }
       }
     });
