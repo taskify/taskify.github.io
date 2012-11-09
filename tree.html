@@ -34,10 +34,10 @@
       tasks= localStorage.getItem('tasktree');
       if (tasks) {
         tasks = JSON.parse(tasks);
-        tasks.push({'@id': task});
+        tasks.push({'@id': task, 'modified' : new Date().toISOString() });
         localStorage.setItem('tasktree', JSON.stringify(tasks));
       } else {
-        localStorage.setItem('tasktree', JSON.stringify([{'@id': task}]));
+        localStorage.setItem('tasktree', JSON.stringify([{'@id': task, 'modified' : new Date().toISOString() }]));
       }
       location.reload();
       return false;
@@ -47,8 +47,17 @@
       var tasks = localStorage.getItem('tasktree');
       if (tasks) {
         tasks = JSON.parse(tasks);
+
+        // sort alg simple timestamp for now
+        tasks.sort(function(a,b) {
+          if (!a['modified']) return 1;
+          first = new Date(a['modified']);
+          second = new Date(b['modified']);
+          return second - first;
+        });
+
         for (i=0; i<tasks.length; i++) {
-          $('h2').first().append('<h3><a href="' + tasks[i]['@id'] + '">' + tasks[i]['@id'] +'</a> <a href="javascript:remove(\'' +tasks[i]['@id']+ '\')">X</a></h3>');
+          $('h2').first().append('<h3><a href="javascript:remove(\'' +tasks[i]['@id']+ '\')">X</a> <a title="'+ tasks[i]['modified']  +'" href="' + tasks[i]['@id'] + '">' + tasks[i]['@id'] +'</a></h3>');
         }
       }
     });
