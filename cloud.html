@@ -67,19 +67,20 @@
 
     function save(uri) {
       deleteFile(uri);
-      putFile(uri, '<#1> <#todo> "'+ escape(localStorage.todo) +'" .');
-      $.ajax({
-        url: 'http://nano.melvin.me/p.php',
-        complete: function (msg) { window.points = msg['responseText']; $("#score").html('Score: ' + msg['responseText']); }
-      });
+      str  = '<#1> <#todo> "'+ escape(localStorage.todo) +'" .\n';
+      str += '<#1> <#tasktree> "'+ escape(localStorage.tasktree) +'" .';
+      putFile(uri, str);
     }
 
     function load(uri) {
-      $.getJSON(uri + '.json', function(data) {   s = (unescape(JSON.stringify(data[uri + '#1'][uri + '#todo'][0]['value']))) ; window.localStorage
-.todo = s.substring( 1, s.length-1); window.location.reload(); } );
+      $.getJSON(uri + '.json', function(data) {  
+        s = (unescape(JSON.stringify(data[uri + '#1'][uri + '#todo'][0]['value']))) ; 
+        window.localStorage.todo = s.substring( 1, s.length-1); 
+        t = (unescape(JSON.stringify(data[uri + '#1'][uri + '#tasktree'][0]['value']))) ; 
+        window.localStorage.tasktree = t.substring( 1, t.length-1); 
+        window.location.reload(); 
+      });
     }
-
-
 
     $(document).ready(function () {
       var uris = localStorage.getItem('workspace');
