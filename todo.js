@@ -401,7 +401,7 @@
     localStorage.setItem('score', score);
     mod = score % 25;
     str = '';  for(i=0; i<25; i+=5) str += mod > i ? '█' : '&nbsp;&nbsp;';
-    $('#score').html(' Score : ' + (score-mod) + ' ' + str );
+    $('#score').html(' Score : ' + (score-mod) + ' ' + str + '|' );
     hook = localStorage.getItem('hook');
     // add your own hook
     if ((mod == 0) && hook) {
