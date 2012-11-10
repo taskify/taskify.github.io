@@ -73,11 +73,11 @@
     }
 
     function load(uri) {
-      $.getJSON(uri + '.json', function(data) {  
-        s = (unescape(JSON.stringify(data[uri + '#1'][uri + '#todo'][0]['value']))) ; 
-        window.localStorage.todo = s.substring( 1, s.length-1); 
-        t = (unescape(JSON.stringify(data[uri + '#1'][uri + '#tasktree'][0]['value']))) ; 
-        window.localStorage.tasktree = t.substring( 1, t.length-1); 
+      $.getJSON($.trim(uri + '.json'), function(data) {  
+        s = (unescape((data[uri + '#1'][uri + '#todo'][0]['value']))) ; 
+        window.localStorage.todo = s; 
+        t = (unescape((data[uri + '#1'][uri + '#tasktree'][0]['value']))) ; 
+        window.localStorage.tasktree = t; 
         window.location.reload(); 
       });
     }
