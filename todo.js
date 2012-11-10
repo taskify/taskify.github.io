@@ -301,11 +301,11 @@
         ).append(
             $('<textarea class="item-text">')
             .click(function(ev) {
-              addPoints();
+              addpoints();
             })
             .keyup(function(ev) {
               if (ev.which == 13 || ev.which == 8) {
-                addPoints();
+                addpoints();
               }
             })
             .keyup(function(ev) {
@@ -394,7 +394,7 @@
     ev.preventDefault();
     ev.stopImmediatePropagation();
   }
-  function addPoints(points) {
+  function addpoints(points) {
     score = localStorage.getItem('score');
     if (!score) score = 0;
     score = parseInt(score) + 5.0;
