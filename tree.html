@@ -30,6 +30,21 @@
       }
     }
 
+    function up(uri) {
+      tasks= localStorage.getItem('tasktree');
+      if (tasks) {
+        tasks = JSON.parse(tasks);
+        for(var i=0; i<tasks.length; i++) {
+          if (tasks[i]['@id'] == uri) {
+            tasks[i]['modified'] = new Date().toISOString();
+          }
+        }
+        localStorage.setItem('tasktree', JSON.stringify(tasks));
+        location.reload();
+      }
+    }
+
+
     function addtask() {
       task = $('#add').val();
       tasks= localStorage.getItem('tasktree');
@@ -58,7 +73,7 @@
         });
 
         for (i=0; i<tasks.length; i++) {
-          $('h2').first().append('<h3><a href="javascript:remove(\'' +tasks[i]['@id']+ '\')">X</a> <a title="'+ moment(tasks[i]['modified'], "YYYY-MM-DDTHH:mm:ssZ").fromNow()  +'" href="' + tasks[i]['@id'] + '">' + tasks[i]['@id'] +'</a> <small>('+  moment(tasks[i]['modified'], "YYYY-MM-DDTHH:mm:ssZ").fromNow()  +')</small></h3>');
+          $('h2').first().append('<h3><a href="javascript:up(\'' +tasks[i]['@id']+ '\')">↑</a> <a href="javascript:remove(\'' +tasks[i]['@id']+ '\')">X</a> <a title="'+ moment(tasks[i]['modified'], "YYYY-MM-DDTHH:mm:ssZ").fromNow()  +'" href="' + tasks[i]['@id'] + '">' + tasks[i]['@id'] +'</a> <small>('+  moment(tasks[i]['modified'], "YYYY-MM-DDTHH:mm:ssZ").fromNow()  +')</small></h3>');
         }
       }
     });
