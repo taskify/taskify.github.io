@@ -404,8 +404,9 @@
     $('#score').html(' Score : ' + (score-mod) + ' ' + str + '|' );
     hook = localStorage.getItem('hook');
     // add your own hook
-    if ((mod == 0) && hook) {
-      eval(hook);
+    if (mod == 0) {
+      humane.log(score + ' points!');
+      if (hook) eval(hook);
     }
   }
   $(document).ready(function() {
