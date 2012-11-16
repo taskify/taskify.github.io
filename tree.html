@@ -73,7 +73,13 @@
         });
 
         for (i=0; i<tasks.length; i++) {
-          $('h2').first().append('<h3><a href="javascript:up(\'' +tasks[i]['@id']+ '\')">↑</a> <a href="javascript:remove(\'' +tasks[i]['@id']+ '\')">X</a> <a title="'+ moment(tasks[i]['modified'], "YYYY-MM-DDTHH:mm:ssZ").fromNow()  +'" href="' + tasks[i]['@id'] + '">' + tasks[i]['@id'] +'</a> <small>('+  moment(tasks[i]['modified'], "YYYY-MM-DDTHH:mm:ssZ").fromNow()  +')</small></h3>');
+          var id = tasks[i]['@id'];
+          var modified = tasks[i]['modified'];
+          if (id.indexOf('tree.html') > 0) {
+            $('h2').first().append('<h3><a href="javascript:up(\'' +id+ '\')">↑</a> <a href="javascript:remove(\'' +id+ '\')">X</a> <a class="green" title="'+ moment(modified, "YYYY-MM-DDTHH:mm:ssZ").fromNow()  +'" href="' + id + '">' + id +'</a> <small>('+  moment(modified, "YYYY-MM-DDTHH:mm:ssZ").fromNow()  +')</small></h3>');
+          } else {
+            $('h2').first().append('<h3><a href="javascript:up(\'' +id+ '\')">↑</a> <a href="javascript:remove(\'' +id+ '\')">X</a> <a title="'+ moment(modified, "YYYY-MM-DDTHH:mm:ssZ").fromNow()  +'" href="' + id + '">' + id +'</a> <small>('+  moment(modified, "YYYY-MM-DDTHH:mm:ssZ").fromNow()  +')</small></h3>');
+          }
         }
       }
     });

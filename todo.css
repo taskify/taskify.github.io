@@ -18,3 +18,4 @@ body.specific .item.selected  { opacity:1; }
 .item .item-text:disabled { background-color: transparent; border: none; }
 .item .item-tags { margin-top: 4px; }
 .item .item-tags .tag { cursor: pointer; }
+.green { color: green }
