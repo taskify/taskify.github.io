@@ -441,5 +441,11 @@ function displayUser(val) {
   webIDText.innerHTML = ' | ' + val;
   window.user = val;
   window.url = 'http://todo.data.fm/' + encodeURIComponent(val);
+
+  var uris = localStorage.getItem('workspace');
+  if (uris) {
+    uris = JSON.parse(uris);
+    $('#save').html(' <a href="javascript:save(\''+ uris[0] +'\')">Save</a> | <a href="javascript:load(\''+ uris[0] +'\')">Load</a> |');
+  }
 }
 
