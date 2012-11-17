@@ -449,3 +449,75 @@ function displayUser(val) {
   }
 }
 
+    // TODO cleanup
+    function deleteFile(file) {
+      var body = '';
+      xhr = new XMLHttpRequest();
+      xhr.open('DELETE', file, false);
+      xhr.setRequestHeader('Content-Type', 'text/turtle; charset=UTF-8');
+      xhr.send(body);
+    }
+
+    function putFile(file, data) {
+      xhr = new XMLHttpRequest();
+      xhr.open('PUT', file, false);
+      xhr.setRequestHeader('Content-Type', 'text/turtle; charset=UTF-8');
+      xhr.send(data);
+    }
+
+    function postFile(file, data) {
+      xhr = new XMLHttpRequest();
+      xhr.open('POST', file, false);
+      xhr.setRequestHeader('Content-Type', 'text/turtle; charset=UTF-8');
+      xhr.send(data);
+    }
+
+    function remove(list) {
+      var uris = localStorage.getItem('workspace');
+      if (uris) {
+        uris = JSON.parse(uris);
+        for (i=0; i<uris.length; i++) {
+          if (uris[i] == list) {
+            uris.splice(i,1);
+            localStorage.setItem('workspace', JSON.stringify(uris));
+            location.reload();
+          }
+        }
+      }
+    }
+    function adduri() {
+      uri = $('#add').val();
+      uris= localStorage.getItem('workspace');
+      if (uris) {
+        uris = JSON.parse(uris);
+        uris.push(uri);
+        localStorage.setItem('workspace', JSON.stringify(uris));
+      } else {
+        localStorage.setItem('workspace', JSON.stringify([uri]));
+      }
+      location.reload();
+      return false;
+    }
+
+
+    function save(uri) {
+      deleteFile(uri);
+      str  = '<#1> <#todo> "'+ escape(localStorage.todo) +'" .\n';
+      str += '<#1> <#tasktree> "'+ escape(localStorage.tasktree) +'" .';
+      putFile(uri, str);
+    }
+
+    function load(uri) {
+      humane.log('loading');
+      $.getJSON($.trim(uri + '.json'), function(data) {  
+        s = (unescape((data[uri + '#1'][uri + '#todo'][0]['value']))) ; 
+        window.localStorage.todo = s; 
+        t = (unescape((data[uri + '#1'][uri + '#tasktree'][0]['value']))) ; 
+        window.localStorage.tasktree = t; 
+        humane.log('loaded');
+        window.location.reload(); 
+      });
+    }
+
+
+
