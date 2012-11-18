@@ -1,3 +1,4 @@
+// * Copyright 2012 Melvin Carvalho and other contributors; Licensed MIT 
 (function($) {
   var lkp; // logs last key press event
   var currentfocus; // stores the currently focused item
@@ -516,7 +517,9 @@ function displayUser(val) {
         window.localStorage.tasktree = t; 
         humane.log('loaded');
         window.location.reload(); 
-      });
+      })
+      .error(function(e) { alert("error" + JSON.stringify(e)); })
+      ;
     }
 
 
