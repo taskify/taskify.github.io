@@ -25,16 +25,24 @@
 </head>
 <body>
 <div class="navbar navbar-inverse">
+
   <div class="navbar-inner">
+    <a style="font-family: Arial; font-style:italic; color:#0088CC" class="brand" href="/">Taski<b>f</b>y</a> &nbsp;
+    <ul class="nav">
+      <li><a style="color: #0088CC" id="load" href="#"></a></li>
+      <li><a style="color: #0088CC" id="save" href="#"></a></li>
+      <li><a style="color: #0088CC" href="cloud.html">Settings</a></li>
+      <li><a style="color: #0088CC" href="https://github.com/taskify/taskify/wiki/Features">Help</a></li>
+      <li><a id="score" href="#">Credits: 0</a></li>
+      <li><a id="user" href="#">Not Logged In</a></li>
+    </ul>
     <form class="form-inline pull-left" id="newtagform">
+<!--
       <div class="btn-group input-append">
         <input id="newtag" class="input-medium" size="32" type="text"><button class="btn btn-primary btn-mini"><i class="icon-plus-sign icon-white"></i><i class="icon-tag icon-white"></i></button>
       </div>
+-->
     </form>
-    <span id="user">Not logged in </span> | 
-    <span id="score">Credits: 0 | </span>
-    <span><a href="/tree.html">Tree</a> | <a href="cloud.html">Cloud</a> | <a href="https://github.com/taskify/taskify/wiki/Features">Help</a> | </span>
-    <span id="save"></span>
     <div id="tags" class="btn-group pull-left">
 
     </div>

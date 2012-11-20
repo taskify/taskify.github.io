@@ -204,7 +204,7 @@
   // default "first run" state
   if(!localStorage.getItem('todo')) {
     with (todo) {
-      var cols = [createColumn('column one'),createColumn('column two'),createColumn('column three')];
+      var cols = [createColumn('Current'),createColumn('Someday'),createColumn('Ideas')];
       cols.forEach(function(col) {
         col.items.add( createItem('') );
         columns.add(col);
@@ -275,6 +275,7 @@
               $(this).parents('.item').remove();
               displayColumn(_c);
             })
+/*
           ).append(
             $('<button class="btn btn-mini pull-right btn-inverse item-complete"><i class="icon-ok icon-white"></i></button>').click(function() {
               item.complete = !item.complete;
@@ -298,6 +299,7 @@
                 $('.item[data-id='+item.id+'] .taglist').append(menu);
               })
             )
+*/
           )
         ).append(
             $('<textarea class="item-text">')
@@ -305,7 +307,12 @@
               addpoints();
             })
             .keyup(function(ev) {
-              if (ev.which == 13 || ev.which == 8) {
+              if (lkp && lkp.target && lkp.which != ev.which && ev.which == 8) {
+                addpoints();
+              }
+            })
+            .keyup(function(ev) {
+              if (lkp && lkp.target && lkp.which != ev.which && ev.which == 13) {
                 addpoints();
               }
             })
@@ -402,12 +409,16 @@
     localStorage.setItem('score', score);
     mod = score % 25;
     str = '';  for(i=0; i<25; i+=5) str += mod > i ? '█' : '&nbsp;&nbsp;';
-    $('#score').html(' Score : ' + (score-mod) + ' ' + str + '|' );
+    $('#score').html(' Credits : ' + (score-mod) + ' ' + str + '|');
     hook = localStorage.getItem('hook');
     // add your own hook
     if (mod == 0) {
       humane.log(score + ' points!');
-      if (hook) eval(hook);
+      if (hook) {
+        eval(hook);
+      } else if ( window.user ) {
+        $.ajax({url:"http://taskify.org/c/?webid="+window.user, complete: function (msg) { window.localStorage.setItem("score", msg["responseText"]) ; $("#score").html("Credits: " + msg["responseText"]); } })
+      }
     }
   }
   $(document).ready(function() {
@@ -439,14 +450,17 @@
 
 function displayUser(val) {
   webIDText = document.getElementById('user');
-  webIDText.innerHTML = ' | ' + val;
+  webIDText.innerHTML = val;
   window.user = val;
   window.url = 'http://todo.data.fm/' + encodeURIComponent(val);
 
   var uris = localStorage.getItem('workspace');
   if (uris) {
     uris = JSON.parse(uris);
-    $('#save').html(' <a href="javascript:save(\''+ uris[0] +'\')">Save</a> | <a href="javascript:load(\''+ uris[0] +'\')">Load</a> |');
+    $('#load').html('Load');
+    $('#load').attr('href', 'javascript:load(\''+ uris[0] +'\')');
+    $('#save').html('Save');
+    $('#save').attr('href', 'javascript:save(\''+ uris[0] +'\')');
   }
 }
 
