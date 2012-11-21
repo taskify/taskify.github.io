@@ -403,21 +403,37 @@
     ev.stopImmediatePropagation();
   }
   function addpoints(points) {
-    score = localStorage.getItem('score');
-    if (!score) score = 0;
-    score = parseInt(score) + 5.0;
-    localStorage.setItem('score', score);
-    mod = score % 25;
+    var today;
+    webcredits = localStorage.getItem('webcredits');
+    if (webcredits) {
+      webcredits=JSON.parse(webcredits);
+      today = webcredits['today'];
+      if (!webcredits['webcreditsuri']) webcredits['webcreditsuri'] = ['http://taskify.org/c/'];
+    } else {
+      webcredits = {};
+    }
+    if (!today) today = 0;
+    today = parseInt(today) + 5.0;
+    webcredits['today'] = today;
+    localStorage.setItem('webcredits', JSON.stringify(webcredits));
+    mod = today % 25;
     str = '';  for(i=0; i<25; i+=5) str += mod > i ? '█' : '&nbsp;&nbsp;';
-    $('#score').html(' Credits : ' + (score-mod) + ' ' + str + '|');
+    $('#score').html(' Credits : ' + (today - mod) + ' ' + str + '|');
     hook = localStorage.getItem('hook');
     // add your own hook
     if (mod == 0) {
-      humane.log(score + ' points!');
+      humane.log(today + ' points!');
       if (hook) {
         eval(hook);
       } else if ( window.user ) {
-        $.ajax({url:"http://taskify.org/c/?webid="+window.user, complete: function (msg) { window.localStorage.setItem("score", msg["responseText"]) ; $("#score").html("Credits: " + msg["responseText"]); } })
+        $.ajax({
+          url:webcredits['webcreditsuri'][0] + "?webid="+window.user, 
+          complete: function (msg) { 
+            webcredits = JSON.parse(localStorage.getItem('webcredits')) || {};
+            webcredits['today'] = msg["responseText"];
+            window.localStorage.setItem("webcredits", JSON.stringify(webcredits)) ; 
+            $("#score").html("Credits: " + msg["responseText"]); 
+        }})
       }
     }
   }
@@ -441,9 +457,18 @@
     });
     $('.sortable').sortable({items:'> .item', handle:'.handle', connectWith:'.sortable', update:function() { resequence() } });
 
+    wc = localStorage.getItem('webcredits');
+    if (wc) {
+      wc=JSON.parse(webcredits);
+      if (!webcredits['webcreditsuri']) webcredits['webcreditsuri'] = ['http://taskify.org/c/'];
+    } else {
+      webcredits = {'webcreditsuri' : ['http://taskify.org/c/'], 'today' : 0 };
+    }
+
     var script = document.createElement('script');
     script.src = 'https://data.fm/user.js' + '?callback=displayUser';
     document.body.appendChild(script);
+
 
   });
 })(jQuery);
@@ -457,10 +482,17 @@ function displayUser(val) {
   var uris = localStorage.getItem('workspace');
   if (uris) {
     uris = JSON.parse(uris);
-    $('#load').html('Load');
+    $('#help').parent().append('<li><a style="color: #0088CC" id="save" href="#">Save</a></li>');
+    $('#help').parent().append('<li><a style="color: #0088CC" id="load" href="#">Load</a></li>');
     $('#load').attr('href', 'javascript:load(\''+ uris[0] +'\')');
-    $('#save').html('Save');
     $('#save').attr('href', 'javascript:save(\''+ uris[0] +'\')');
+  }
+  wc = localStorage.getItem('webcredits');
+  if (wc) {
+    wc=JSON.parse(webcredits);
+    if (!webcredits['webcreditsuri']) webcredits['webcreditsuri'] = ['http://taskify.org/c/'];
+  } else {
+    webcredits = {'webcreditsuri' : ['http://taskify.org/c/'], 'today' : 0 };
   }
 }
 
