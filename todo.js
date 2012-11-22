@@ -437,9 +437,7 @@
       }
     }
   }
-  $(document).ready(function() {
-    document.title = document.domain;
-
+  function render() {
     todo.tags.forEach(function(tag) {
       $('#tags').append( displayTag(tag) );
     });
@@ -456,10 +454,15 @@
       return false;
     });
     $('.sortable').sortable({items:'> .item', handle:'.handle', connectWith:'.sortable', update:function() { resequence() } });
+  }
+  $(document).ready(function() {
+    document.title = document.domain;
+
+    render();
 
     wc = localStorage.getItem('webcredits');
     if (wc) {
-      wc=JSON.parse(webcredits);
+      wc=JSON.parse(wc);
       if (!wc['webcreditsuri']) wc['webcreditsuri'] = ['http://taskify.org/c/'];
     } else {
       wc = {'webcreditsuri' : ['http://taskify.org/c/'], 'today' : 0 };
