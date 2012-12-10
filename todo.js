@@ -456,6 +456,7 @@
     $('.sortable').sortable({items:'> .item', handle:'.handle', connectWith:'.sortable', update:function() { resequence() } });
   }
   $(document).ready(function() {
+    window.localStorage.setItem('version', '0.1');
     document.title = document.domain;
 
     render();
