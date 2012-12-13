@@ -455,6 +455,7 @@
     });
     $('.sortable').sortable({items:'> .item', handle:'.handle', connectWith:'.sortable', update:function() { resequence() } });
   }
+
   $(document).ready(function() {
     window.localStorage.setItem('version', '0.1');
     document.title = document.domain;
@@ -483,6 +484,13 @@ function displayUser(val) {
   webIDText.innerHTML = val;
   window.user = val;
   window.url = 'http://todo.data.fm/' + encodeURIComponent(val);
+
+  ws = localStorage.getItem('workspace');
+  if (!ws) {
+    ws= [];
+    ws.push('https://taskify.org/private/' + hex_sha1(window.user) + '/' + document.domain);
+    localStorage.setItem('workspace', JSON.stringify(ws));
+  }
 
   var uris = localStorage.getItem('workspace');
   if (uris) {
