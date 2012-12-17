@@ -472,7 +472,7 @@
     localStorage.setItem('webcredits', JSON.stringify(wc));
 
     var script = document.createElement('script');
-    script.src = 'https://data.fm/user.js' + '?callback=displayUser';
+    script.src = 'https://taskify.org/common/user.js.php' + '?callback=displayUser';
     document.body.appendChild(script);
 
 
@@ -480,10 +480,11 @@
 })(jQuery);
 
 function displayUser(val) {
-  webIDText = document.getElementById('user');
-  webIDText.innerHTML = val;
   window.user = val;
   window.url = 'http://todo.data.fm/' + encodeURIComponent(val);
+  if (window.user.indexOf('dns:') != -1) return;
+  webIDText = document.getElementById('user');
+  webIDText.innerHTML = val;
 
   ws = localStorage.getItem('workspace');
   if (!ws) {
