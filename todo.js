@@ -496,6 +496,7 @@ function displayUser(val) {
     ws = [];
     ws.push(getParameterByName('workspace'));
     localStorage.setItem('workspace', JSON.stringify(ws));
+    load(getParameterByName('workspace'));
   }
 
   var uris = localStorage.getItem('workspace');
@@ -575,10 +576,9 @@ function displayUser(val) {
         t = (unescape((data[uri + '#1'][uri + '#tasktree'][0]['value']))) ; 
         window.localStorage.tasktree = t; 
         humane.log('loaded');
-        window.location.reload(); 
+        window.location.href = location.protocol + '//' + document.domain + '/';
       })
-      .error(function(e) { alert("error" + JSON.stringify(e)); })
-      ;
+      .error(function(e) { alert("error" + JSON.stringify(e)); });
     }
 
 
