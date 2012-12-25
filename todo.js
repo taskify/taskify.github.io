@@ -492,6 +492,11 @@ function displayUser(val) {
     ws.push('https://taskify.org/private/' + hex_sha1(window.user) + '/' + document.domain);
     localStorage.setItem('workspace', JSON.stringify(ws));
   }
+  if (getParameterByName('workspace')) {
+    ws = [];
+    ws.push(getParameterByName('workspace'));
+    localStorage.setItem('workspace', JSON.stringify(ws));
+  }
 
   var uris = localStorage.getItem('workspace');
   if (uris) {
@@ -577,4 +582,14 @@ function displayUser(val) {
     }
 
 
+function getParameterByName(name) {
+  name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+  var regexS = "[\\?&]" + name + "=([^&#]*)";
+  var regex = new RegExp(regexS);
+  var results = regex.exec(window.location.search);
+  if(results == null)
+    return "";
+  else
+    return decodeURIComponent(results[1].replace(/\+/g, " "));
+}
 
