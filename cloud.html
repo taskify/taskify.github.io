@@ -103,7 +103,8 @@
     function save(uri) {
       deleteFile(uri);
       str  = '<#1> <#todo> "'+ escape(localStorage.todo) +'" .\n';
-      str += '<#1> <#tasktree> "'+ escape(localStorage.tasktree) +'" .';
+      str += '<#1> <#tasktree> "'+ escape(localStorage.tasktree) +'" .\n';
+      str += '<#1> <#version> "0.1" .';
       putFile(uri, str);
     }
 
