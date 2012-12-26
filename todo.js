@@ -219,7 +219,7 @@
         .append( $('<span class="tag-name">') );
       return a;
     }
-    var current = $('.tag[data-id='+tag.id+']');
+    var current = $('.tag[data-id="'+tag.id+'"]');
     if(current.length == 0) current = tagTemplate(tag);
     $('.tag-name', current).text( tag.name );
     return current;
@@ -235,7 +235,7 @@
         .append( $('<div class="items sortable">') );
       return a;
     }
-    var current = $('.column[data-id='+column.id+']');
+    var current = $('.column[data-id="'+column.id+'"]');
     if(current.length == 0) current = columnTemplate(column);
     $('.column-name', current).text( column.name );
     column.items.forEach(function(item) {
@@ -323,12 +323,12 @@
                   if(ev.which == 13) {
                     stopEvent(ev);
                     item.text = $(this).val().replace(/^[\r\n]+|\.|[\r\n]+$/,'')
-                    var _i = $('.item[data-id='+item.id+']');
+                    var _i = $('.item[data-id="'+item.id+'"]');
                     var newitem = todo.createItem();
                     todo.columns.get( _i.parents('.column').data('id') ).items.add( newitem );
                       _i.after( displayItem(newitem) );
                     resequence();
-                    $('.item[data-id='+newitem.id+'] .item-text').focus();
+                    $('.item[data-id="'+newitem.id+'"] .item-text').focus();
                     log = false;
                   }
                 }
@@ -354,7 +354,7 @@
       );
       return a;
     }
-    var current = $('.item[data-id='+item.id+']');
+    var current = $('.item[data-id="'+item.id+'"]');
     if(current.length == 0) current = itemTemplate(item);
     $('.item-value', current).text( item.value ).removeClass('badge-info badge-warning badge-important').addClass(valueClass(item));
     $('.item-text', current).val( item.text );
@@ -379,7 +379,7 @@
   function resequence() {
     todo.columns.forEach(function(column) {
       column.items.empty();
-      $('.column[data-id='+column.id+'] .items .item').each(function() {
+      $('.column[data-id="'+column.id+'"] .items .item').each(function() {
         column.items.add( todo.items.get($(this).data('id')) );
       })
       displayColumn(column);
@@ -593,4 +593,3 @@ function getParameterByName(name) {
   else
     return decodeURIComponent(results[1].replace(/\+/g, " "));
 }
-
