@@ -204,7 +204,7 @@
   // default "first run" state
   if(!localStorage.getItem('todo')) {
     with (todo) {
-      var cols = [createColumn('Current'),createColumn('Someday'),createColumn('Ideas')];
+      var cols = [createColumn('Next Steps'),createColumn('Plans'),createColumn('Tasks')];
       cols.forEach(function(col) {
         col.items.add( createItem('') );
         columns.add(col);
@@ -482,9 +482,10 @@
 function displayUser(val) {
   window.user = val;
   window.url = 'http://todo.data.fm/' + encodeURIComponent(val);
-  if (window.user.indexOf('dns:') != -1) return;
-  webIDText = document.getElementById('user');
-  webIDText.innerHTML = val;
+  if (window.user.indexOf('dns:') == -1) { 
+    webIDText = document.getElementById('user');
+    webIDText.innerHTML = val;
+  }
 
   ws = localStorage.getItem('workspace');
   if (!ws) {
