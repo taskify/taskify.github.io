@@ -569,17 +569,44 @@ function displayUser(val) {
       putFile(uri, str);
     }
 
-    function load(uri) {
+    function load(uri, version) {
       humane.log('loading');
-      $.getJSON($.trim(uri + '.json'), function(data) {  
-        s = (unescape((data[uri + '#1'][uri + '#todo'][0]['value']))) ; 
-        window.localStorage.todo = s; 
-        t = (unescape((data[uri + '#1'][uri + '#tasktree'][0]['value']))) ; 
-        window.localStorage.tasktree = t; 
-        humane.log('loaded');
-        window.location.href = location.protocol + '//' + document.domain + '/';
-      })
-      .error(function(e) { alert("error" + JSON.stringify(e)); });
+      version = version || 0.1;
+
+      if (version == 0.1) {
+        $.getJSON($.trim(uri + '.json'), function(data) {  
+          var s = data[uri + '#1'];  if (!s) return;
+          var p = s[uri+ '#todo']; if (!p) return;
+          var todo = (unescape((p[0]['value']))) ; 
+          window.localStorage.todo = todo; 
+          if (p = s[uri+ '#tasktree']) {
+            var tasktree = (unescape((p[0]['value']))) ; 
+            window.localStorage.tasktree = tasktree; 
+          }
+          humane.log('loaded');
+          window.location.href = location.protocol + '//' + document.domain + '/';
+        })
+        .error(function(e) { alert("error" + JSON.stringify(e)); });
+      }
+
+      if (version == 0.2) {
+        $.getJSON($.trim(uri + '.json'), function(data) {
+          var s = data[uri + '#1'];  if (!s) return;
+          var p = s[uri+ '#todo']; if (!p) return;
+          var todo = (unescape((p[0]['value']))) ;
+          window.localStorage.todo = todo;
+          if (p = s[uri+ '#tasktree']) {
+            var tasktree = (unescape((p[0]['value']))) ;
+            window.localStorage.tasktree = tasktree;
+          }
+          humane.log('loaded');
+          window.location.href = location.protocol + '//' + document.domain + '/';
+        })
+        .error(function(e) { alert("error" + JSON.stringify(e)); });
+      }
+    
+
+
     }
 
 
