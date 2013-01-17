@@ -427,7 +427,7 @@
         eval(hook);
       } else if ( window.user ) {
         $.ajax({
-          url:webcredits['webcreditsuri'][0] + "?webid="+window.user, 
+          url:webcredits['webcreditsuri'][0] + "?webid="+escape(window.user) + "&referrer=" + escape(window.location.protocol + '//' + window.location.hostname), 
           complete: function (msg) { 
             webcredits = JSON.parse(localStorage.getItem('webcredits')) || {};
             webcredits['today'] = msg["responseText"];
@@ -457,7 +457,7 @@
   }
 
   $(document).ready(function() {
-    window.localStorage.setItem('version', '0.1');
+    window.localStorage.setItem('version', '0.2');
     document.title = document.domain;
 
     render();
@@ -563,49 +563,155 @@ function displayUser(val) {
 
     function save(uri) {
       deleteFile(uri);
-      str  = '<#1> <#todo> "'+ escape(localStorage.todo) +'" .\n';
-      str += '<#1> <#tasktree> "'+ escape(localStorage.tasktree) +'" .\n';
-      str += '<#1> <#version> "0.1" .';
+      var str = '';
+      str += '\n'+ '<> a <http://www.w3.org/2005/01/wf/flow#tracker> . ';
+      str += '\n'+ '<> <http://www.w3.org/ns/adms#representationTechnique> <https://taskify.org/ns/0.2> . ';
+
+      var todo = localStorage.todo;
+      if (todo) todo = JSON.parse(todo);
+
+      if (todo) {
+        str += '\n'+ '<> <http://purl.org/ontology/co/core#count> '+ todo.inc +' . ';
+        for (var i=0; i<todo.items.length; i++) {
+          str += '\n'+ '<#' + todo.items[i].id + '> a <http://dig.csail.mit.edu/2010/issues/track#Task> .';
+          str += '\n'+ '<#' + todo.items[i].id + '> <http://purl.org/dc/terms/description> "'+ escape(todo.items[i].text)  +'".';
+          str += '\n'+ '<#' + todo.items[i].id + '> <http://www.w3.org/2002/12/cal/ical#completed> '+ todo.items[i].complete +'.';
+          str += '\n'+ '<#' + todo.items[i].id + '> <https://taskify.org/ns/task#urgent> '+ todo.items[i].urgent +'.';
+          str += '\n'+ '<#' + todo.items[i].id + '> <https://taskify.org/ns/task#important> '+ todo.items[i].important +'.';
+          for (var j=0; j<todo.items[i].tags.length; j++) {
+            str += '\n'+ '<#' + todo.items[i].id + '> <http://commontag.org/ns#tagged> <#'+ todo.items[i].tags[j] +'>.';
+          }
+        }
+        for (var i=0; i<todo.tags.length; i++) {
+          str += '\n'+ '<#' + todo.tags[i].id + '> a <http://commontag.org/ns#Tag> .';
+          str += '\n'+ '<#' + todo.tags[i].id + '> <http://commontag.org/ns#label> "'+ escape(todo.tags[i].name)  +'".';
+        }
+        for (var i=0; i<todo.columns.length; i++) {
+          str += '\n'+ '<#' + todo.columns[i].id + '> a <https://taskify.org/ns/task#Column> .';
+          str += '\n'+ '<#' + todo.columns[i].id + '> <https://taskify.org/ns/task#position> '+ i +' .';
+          str += '\n'+ '<#' + todo.columns[i].id + '> <http://purl.org/dc/terms/description> "'+ escape(todo.columns[i].name)  +'".';
+          for (var j=0; j<todo.columns[i].items.length; j++) {
+            str += '\n'+ '<#' + todo.columns[i].id + '> <https://taskify.org/ns/task#hasTask> <#'+ todo.columns[i].items[j] +'>.';
+          }
+        }
+      }
+
+/*
+      tasktree = localStorage.tasktree;
+      if (tasktree) tasktree = JSON.parse(tasktree);
+      if (tasktree) {
+        for (var i=0; i<tasktree.length; i++) {
+          str += '<'+ tasktree[i]['@id']  +'> <http://purl.org/dc/terms/modified> "'+ tasktree[i]['modified']  +'" . ';
+        }
+      }
+*/
+
+      //alert(str);
       putFile(uri, str);
     }
 
     function load(uri, version) {
       humane.log('loading');
-      version = version || 0.1;
-
-      if (version == 0.1) {
-        $.getJSON($.trim(uri + '.json'), function(data) {  
-          var s = data[uri + '#1'];  if (!s) return;
-          var p = s[uri+ '#todo']; if (!p) return;
-          var todo = (unescape((p[0]['value']))) ; 
-          window.localStorage.todo = todo; 
-          if (p = s[uri+ '#tasktree']) {
-            var tasktree = (unescape((p[0]['value']))) ; 
-            window.localStorage.tasktree = tasktree; 
-          }
-          humane.log('loaded');
-          window.location.href = location.protocol + '//' + document.domain + '/';
-        })
-        .error(function(e) { alert("error" + JSON.stringify(e)); });
-      }
+      version = 0.2;
 
       if (version == 0.2) {
         $.getJSON($.trim(uri + '.json'), function(data) {
-          var s = data[uri + '#1'];  if (!s) return;
-          var p = s[uri+ '#todo']; if (!p) return;
-          var todo = (unescape((p[0]['value']))) ;
-          window.localStorage.todo = todo;
-          if (p = s[uri+ '#tasktree']) {
-            var tasktree = (unescape((p[0]['value']))) ;
-            window.localStorage.tasktree = tasktree;
+
+          var todo = {};
+          var items = [];
+          var columns = [{items: []},{ items: []},{items: []}];
+          var inc = 0;
+
+          for (var key1 in data) if(data.hasOwnProperty(key1)) {
+             var type = data[key1]['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'];
+             // get type
+             if (type) {
+               type = type[0]['value'];
+               if (type == 'http://www.w3.org/2005/01/wf/flow#tracker') {
+                 // get inc
+                 if (data[key1]['http://purl.org/ontology/co/core#count']) {
+                   inc = data[key1]['http://purl.org/ontology/co/core#count'][0]['value'];
+                 }
+
+                 // get version
+                 if (data[key1]['http://www.w3.org/ns/adms#representationTechnique']) {
+                   var version = data[key1]['http://www.w3.org/ns/adms#representationTechnique'][0]['value'];
+                 }
+
+               } else if (type == 'https://taskify.org/ns/task#Column') {
+                 // populate column
+
+                 // get position
+                 if (data[key1]['https://taskify.org/ns/task#position']) {
+                   var position = data[key1]['https://taskify.org/ns/task#position'][0]['value'];
+                 }
+
+                 // get description
+                 if (data[key1]['http://purl.org/dc/terms/description']) {
+                   columns[position]['name'] = unescape(data[key1]['http://purl.org/dc/terms/description'][0]['value']);
+                   columns[position]['type'] = 'Column';
+                   columns[position]['id'] = key1;
+                 }
+
+
+                 // get items
+                 if (data[key1]['https://taskify.org/ns/task#hasTask']) {
+                   for(var i=0; i<data[key1]['https://taskify.org/ns/task#hasTask'].length; i++) {
+                     columns[position].items.push(data[key1]['https://taskify.org/ns/task#hasTask'][i]['value']);
+                   }
+                 }
+
+
+               } else if (type == 'http://dig.csail.mit.edu/2010/issues/track#Task') {
+                 // create item
+                 var item = {};
+                 item['type'] = 'Item';
+                 item['id'] = key1;
+
+                 // get description
+                 if (data[key1]['http://purl.org/dc/terms/description']) {
+                   item['text'] = unescape(data[key1]['http://purl.org/dc/terms/description'][0]['value']);
+                 }
+
+                 // get complete
+                 if (data[key1]['http://www.w3.org/2002/12/cal/ical#completed']) {
+                   item['complete'] = ( data[key1]['http://www.w3.org/2002/12/cal/ical#completed'][0]['value'] == 'true' );
+                 }
+
+                 // get important
+                 if (data[key1]['https://taskify.org/ns/task#important']) {
+                   item['important'] = ( data[key1]['https://taskify.org/ns/task#important'][0]['value'] == 'true' );
+                 }
+
+                 // get urgent
+                 if (data[key1]['https://taskify.org/ns/task#urgent']) {
+                   item['urgent'] = ( data[key1]['https://taskify.org/ns/task#urgent'][0]['value'] == 'true' );
+                 }
+
+                 items.push(item);
+
+               } else if (type == '<http://commontag.org/ns#Tag') {
+               }
+
+
+             }
           }
+
+          todo['items'] = items;
+          todo['columns'] = columns;
+          todo['inc'] = inc;
+          todo['tags'] = [];
+
+          localStorage.setItem('todo', JSON.stringify(todo));
+
+//alert(JSON.stringify(todo));
+
           humane.log('loaded');
-          window.location.href = location.protocol + '//' + document.domain + '/';
+          //window.location.href = location.protocol + '//' + document.domain + '/';
         })
         .error(function(e) { alert("error" + JSON.stringify(e)); });
       }
-    
-
+   
 
     }
 
