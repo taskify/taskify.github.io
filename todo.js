@@ -562,52 +562,78 @@ function displayUser(val) {
 
 
     function save(uri) {
-      deleteFile(uri);
+      humane.log('saving');
+
+      // delete old file
+      // todo: change this to clobber
+      //deleteFile(uri);
+
+      // init
       var str = '';
+
+      // document
       str += '\n'+ '<> a <http://www.w3.org/2005/01/wf/flow#tracker> . ';
       str += '\n'+ '<> <http://www.w3.org/ns/adms#representationTechnique> <https://taskify.org/ns/0.2> . ';
 
       var todo = localStorage.todo;
       if (todo) todo = JSON.parse(todo);
 
+      // todo
       if (todo) {
+        // counter
         str += '\n'+ '<> <http://purl.org/ontology/co/core#count> '+ todo.inc +' . ';
+
+        // items
+        if (!todo.items) todo.items = [];
         for (var i=0; i<todo.items.length; i++) {
-          str += '\n'+ '<#' + todo.items[i].id + '> a <http://dig.csail.mit.edu/2010/issues/track#Task> .';
-          str += '\n'+ '<#' + todo.items[i].id + '> <http://purl.org/dc/terms/description> "'+ escape(todo.items[i].text)  +'".';
-          str += '\n'+ '<#' + todo.items[i].id + '> <http://www.w3.org/2002/12/cal/ical#completed> '+ todo.items[i].complete +'.';
-          str += '\n'+ '<#' + todo.items[i].id + '> <https://taskify.org/ns/task#urgent> '+ todo.items[i].urgent +'.';
-          str += '\n'+ '<#' + todo.items[i].id + '> <https://taskify.org/ns/task#important> '+ todo.items[i].important +'.';
+          var id = todo.items[i].id.indexOf('http') ? '#' + todo.items[i].id : todo.items[i].id;
+          str += '\n'+ '<' + id + '> a <http://dig.csail.mit.edu/2010/issues/track#Task> .';
+          str += '\n'+ '<' + id + '> <http://purl.org/dc/terms/description> "'+ escape(todo.items[i].text)  +'".';
+          str += '\n'+ '<' + id + '> <http://www.w3.org/2002/12/cal/ical#completed> '+ todo.items[i].complete +'.';
+          str += '\n'+ '<' + id + '> <https://taskify.org/ns/task#urgent> '+ todo.items[i].urgent +'.';
+          str += '\n'+ '<' + id + '> <https://taskify.org/ns/task#important> '+ todo.items[i].important +'.';
+          if (!todo.items[i].tags) todo.items[i].tags = [];
           for (var j=0; j<todo.items[i].tags.length; j++) {
-            str += '\n'+ '<#' + todo.items[i].id + '> <http://commontag.org/ns#tagged> <#'+ todo.items[i].tags[j] +'>.';
+            var obj = todo.items[i].tags[j].indexOf('http') ? '#' + todo.items[i].tags[j] : todo.items[i].tags[j];
+            str += '\n'+ '<' + id + '> <http://commontag.org/ns#tagged> <'+ obj +'>.';
           }
         }
+
+        // tags
+        if (!todo.tags) todo.tags = [];
         for (var i=0; i<todo.tags.length; i++) {
-          str += '\n'+ '<#' + todo.tags[i].id + '> a <http://commontag.org/ns#Tag> .';
-          str += '\n'+ '<#' + todo.tags[i].id + '> <http://commontag.org/ns#label> "'+ escape(todo.tags[i].name)  +'".';
+          var id = todo.tags[i].id.indexOf('http') ? '#' + todo.tags[i].id :  todo.tags[i].id;
+          str += '\n'+ '<' + id + '> a <http://commontag.org/ns#Tag> .';
+          str += '\n'+ '<' + id + '> <http://commontag.org/ns#label> "'+ escape(todo.tags[i].name)  +'".';
         }
+
+        // columns
+        if (!todo.columns) todo.columns = [];
         for (var i=0; i<todo.columns.length; i++) {
-          str += '\n'+ '<#' + todo.columns[i].id + '> a <https://taskify.org/ns/task#Column> .';
-          str += '\n'+ '<#' + todo.columns[i].id + '> <https://taskify.org/ns/task#position> '+ i +' .';
-          str += '\n'+ '<#' + todo.columns[i].id + '> <http://purl.org/dc/terms/description> "'+ escape(todo.columns[i].name)  +'".';
+          var id = todo.columns[i].id.indexOf('http') ? '#' + todo.columns[i].id : todo.columns[i].id;
+          str += '\n'+ '<' + id + '> a <https://taskify.org/ns/task#Column> .';
+          str += '\n'+ '<' + id + '> <https://taskify.org/ns/task#position> '+ i +' .';
+          str += '\n'+ '<' + id + '> <http://purl.org/dc/terms/description> "'+ escape(todo.columns[i].name)  +'".';
+          if (!todo.columns[i].items) todo.columns[i].items = [];
           for (var j=0; j<todo.columns[i].items.length; j++) {
-            str += '\n'+ '<#' + todo.columns[i].id + '> <https://taskify.org/ns/task#hasTask> <#'+ todo.columns[i].items[j] +'>.';
+            var obj = todo.columns[i].items[j].indexOf('http') ? '#' + todo.columns[i].items[j] : todo.columns[i].items[j];
+            str += '\n'+ '<' + id + '> <https://taskify.org/ns/task#hasTask> <'+ obj +'>.';
           }
         }
       }
 
-/*
+      // bookmarks
       tasktree = localStorage.tasktree;
       if (tasktree) tasktree = JSON.parse(tasktree);
       if (tasktree) {
         for (var i=0; i<tasktree.length; i++) {
-          str += '<'+ tasktree[i]['@id']  +'> <http://purl.org/dc/terms/modified> "'+ tasktree[i]['modified']  +'" . ';
+          str += '\n <'+ tasktree[i]['@id']  +'> a <http://www.w3.org/2005/01/wf/flow#tracker> ; <http://purl.org/dc/terms/modified> "'+ tasktree[i]['modified']  +'" . ';
         }
       }
-*/
 
       //alert(str);
       putFile(uri, str);
+      humane.log('saved');
     }
 
     function load(uri, version) {
@@ -621,6 +647,7 @@ function displayUser(val) {
           var items = [];
           var columns = [{items: []},{ items: []},{items: []}];
           var inc = 0;
+          var tasktree = [];
 
           for (var key1 in data) if(data.hasOwnProperty(key1)) {
              var type = data[key1]['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'];
@@ -637,6 +664,12 @@ function displayUser(val) {
                  if (data[key1]['http://www.w3.org/ns/adms#representationTechnique']) {
                    var version = data[key1]['http://www.w3.org/ns/adms#representationTechnique'][0]['value'];
                  }
+
+                 // get modified
+                 if (data[key1]['http://purl.org/dc/terms/modified']) {
+                   tasktree.push({ '@id' : key1, 'modified' : data[key1]['http://purl.org/dc/terms/modified'][0]['value'] });
+                 }
+
 
                } else if (type == 'https://taskify.org/ns/task#Column') {
                  // populate column
@@ -703,6 +736,9 @@ function displayUser(val) {
           todo['tags'] = [];
 
           localStorage.setItem('todo', JSON.stringify(todo));
+          if (tasktree) {
+            localStorage.setItem('tasktree', JSON.stringify(tasktree));
+          }
 
 //alert(JSON.stringify(todo));
 
