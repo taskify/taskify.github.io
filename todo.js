@@ -485,12 +485,13 @@ function displayUser(val) {
   if (window.user.indexOf('dns:') == -1) { 
     webIDText = document.getElementById('user');
     webIDText.innerHTML = val;
+    $('#user').attr('href', val);
   }
 
   ws = localStorage.getItem('workspace');
   if (!ws) {
     ws= [];
-    ws.push('https://taskify.org/private/' + hex_sha1(window.user) + '/' + document.domain);
+    ws.push('https://d.taskify.org/private/' + hex_sha1(window.user) + '/' + document.domain);
     localStorage.setItem('workspace', JSON.stringify(ws));
   }
   if (getParameterByName('workspace')) {
@@ -631,7 +632,7 @@ function displayUser(val) {
         }
       }
 
-      //alert(str);
+//alert(str);
       putFile(uri, str);
       humane.log('saved');
     }
@@ -743,7 +744,7 @@ function displayUser(val) {
 //alert(JSON.stringify(todo));
 
           humane.log('loaded');
-          //window.location.href = location.protocol + '//' + document.domain + '/';
+          window.location.href = location.protocol + '//' + document.domain + '/';
         })
         .error(function(e) { alert("error" + JSON.stringify(e)); });
       }
