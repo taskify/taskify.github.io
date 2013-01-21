@@ -418,7 +418,8 @@
     localStorage.setItem('webcredits', JSON.stringify(webcredits));
     mod = today % 25;
     str = '';  for(i=0; i<25; i+=5) str += mod > i ? '█' : '&nbsp;&nbsp;';
-    $('#score').html(' Credits : ' + (today - mod) + ' ' + str + '|');
+    $('#score').html(' Credits : ' + (today - mod) + '</a> ' + str + '|');
+    $('#score').attr('href', 'http://taskify.org/c/dash.php?webid='+ escape(window.user));
     hook = localStorage.getItem('hook');
     // add your own hook
     if (mod == 0) {
@@ -432,7 +433,8 @@
             webcredits = JSON.parse(localStorage.getItem('webcredits')) || {};
             webcredits['today'] = msg["responseText"];
             window.localStorage.setItem("webcredits", JSON.stringify(webcredits)) ; 
-            $("#score").html("Credits: " + msg["responseText"]); 
+            $("#score").html(' Credits: ' + msg["responseText"]+ '</a>'); 
+            $('#score').attr('href', 'http://taskify.org/c/dash.php?webid='+ escape(window.user));
         }})
       }
     }
@@ -486,6 +488,7 @@ function displayUser(val) {
     webIDText = document.getElementById('user');
     webIDText.innerHTML = val;
     $('#user').attr('href', val);
+    $('#score').attr('href', 'http://taskify.org/c/dash.php?webid=' + escape(val));
   }
 
   ws = localStorage.getItem('workspace');
