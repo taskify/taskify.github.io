@@ -492,17 +492,23 @@ function displayUser(val) {
   }
 
   ws = localStorage.getItem('workspace');
-  if (!ws) {
-    ws= [];
-    ws.push('https://d.taskify.org/private/' + hex_sha1(window.user) + '/' + document.domain);
-    localStorage.setItem('workspace', JSON.stringify(ws));
-  }
   if (getParameterByName('workspace')) {
     ws = [];
     ws.push(getParameterByName('workspace'));
     localStorage.setItem('workspace', JSON.stringify(ws));
     load(getParameterByName('workspace'));
+  } else if ( document.domain.indexOf('public.taskify.org') !== -1 && !ws) {
+    ws = [];
+    ws.push('https://d.taskify.org/public/' + document.domain);
+    localStorage.setItem('workspace', JSON.stringify(ws));
+    load(ws[0]);
   }
+  if (!ws) {
+    ws= [];
+    ws.push('https://d.taskify.org/private/' + hex_sha1(window.user) + '/' + document.domain);
+    localStorage.setItem('workspace', JSON.stringify(ws));
+  }
+
 
   var uris = localStorage.getItem('workspace');
   if (uris) {
