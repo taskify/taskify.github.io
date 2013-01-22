@@ -23,24 +23,6 @@
   <script src="sha1.js" type="text/javascript"></script>
   <script src="todo.js" type="text/javascript"></script>
 
-    <style>
-
-    /* GLOBAL STYLES
-    -------------------------------------------------- */
-    /* Padding below the footer and lighter body text */
-
-
-
-
-    /* CUSTOMIZE THE NAVBAR
-    -------------------------------------------------- */
-
-    /* Special class on .container surrounding .navbar, used for positioning it into place. */
-
-    /* Remove border and change up box shadow for more contrast */
-    </style>
-
-  
 </head>
 <body>
     <div class="navbar-wrapper">
@@ -53,12 +35,17 @@
     <a style="font-family: Arial; font-style:italic; color:#0088CC" class="brand" href="/">Taski<b>f</b>y <sup>&alpha;</sup></a> &nbsp;
     <ul class="nav">
       <li><a id="score" href="#">Credits: 0</a></li>
-      <li><a style="color: #0088CC" href="cloud.html">Settings</a></li>
-      <li id="help"><a style="color: #0088CC" href="/start.html">Home</a></li>
+      <li id="help"><a href="/start.html">Start</a></li>
     </ul>
-    <ul class="nav">
-      <li><a id="user" target="_blank" href="https://my-profile.eu/profile.php">Get a Web Identity!</a></li>
-    </ul>
+    <ul class="nav pull-right">
+      <li class="dropdown">
+        <a id="user" target="_blank" href="https://my-profile.eu/profile.php" class="dropdown-toggle" data-toggle="dropdown">Click here to get a Web Identity!<b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          <li><a id="settings" href="cloud.html">Settings</a></li>
+        </ul>
+      </li>
+
+    </ul> 
     <form class="form-inline pull-left" id="newtagform">
 <!--
       <div class="btn-group input-append">

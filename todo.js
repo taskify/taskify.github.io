@@ -485,9 +485,7 @@ function displayUser(val) {
   window.user = val;
   window.url = 'http://todo.data.fm/' + encodeURIComponent(val);
   if (window.user.indexOf('dns:') == -1) { 
-    webIDText = document.getElementById('user');
-    webIDText.innerHTML = val;
-    $('#user').attr('href', val);
+    $('#user').text(val).append('<b class="caret"></b>');
     $('#score').attr('href', 'http://taskify.org/c/dash.php?destination=' + escape(val));
   }
 
@@ -513,8 +511,8 @@ function displayUser(val) {
   var uris = localStorage.getItem('workspace');
   if (uris) {
     uris = JSON.parse(uris);
-    $('#help').parent().append('<li><a style="color: #0088CC" id="save" href="#">Save</a></li>');
-    $('#help').parent().append('<li><a style="color: #0088CC" id="load" href="#">Load</a></li>');
+    $('#settings').parent().append('<li><a #0088CC" id="save" href="#">Save</a></li>');
+    $('#settings').parent().append('<li><a #0088CC" id="load" href="#">Load</a></li>');
     $('#load').attr('href', 'javascript:load(\''+ uris[0] +'\')');
     $('#save').attr('href', 'javascript:save(\''+ uris[0] +'\')');
   }
