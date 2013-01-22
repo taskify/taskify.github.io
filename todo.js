@@ -751,10 +751,11 @@ function displayUser(val) {
           // assign items to columns
           var col = 0;
           for (var i = 0; i<items.length; i++) {
+            if (items.completed) continue;
             var orphan = true;
             for (var j = 0; j<columns.length; j++) {
               for (var k = 0; k<columns[j].items.length; k++) {
-                if (items[i].id == columns[j].items[k]) orphaned = false;
+                if (items[i].id == columns[j].items[k]) orphan = false;
               }
             }
             if (orphan) {
