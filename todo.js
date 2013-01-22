@@ -655,7 +655,7 @@ function displayUser(val) {
 
           var todo = {};
           var items = [];
-          var columns = [{items: []},{ items: []},{items: []}];
+          var columns = [{items: [], type: 'Column'},{ items: [], type: 'Column'},{items: [], type: 'Column'}];
           var inc = 0;
           var tasktree = [];
 
@@ -690,8 +690,10 @@ function displayUser(val) {
                  }
 
                  // get description
-                 if (data[key1]['http://purl.org/dc/terms/description']) {
-                   columns[position]['name'] = unescape(data[key1]['http://purl.org/dc/terms/description'][0]['value']);
+                 var desc = data[key1]['http://purl.org/dc/terms/description'];
+                 if (!desc) desc = data[key1]['http://www.w3.org/2005/01/wf/flow#description']
+                 if (desc) {
+                   columns[position]['name'] = unescape(desc[0]['value']);
                    columns[position]['type'] = 'Column';
                    columns[position]['id'] = key1;
                  }
@@ -705,15 +707,21 @@ function displayUser(val) {
                  }
 
 
-               } else if (type == 'http://dig.csail.mit.edu/2010/issues/track#Task') {
+               } else if (type == 'http://dig.csail.mit.edu/2010/issues/track#Task' || type == 'http://dig.csail.mit.edu/2010/issues/track#New') {
                  // create item
                  var item = {};
                  item['type'] = 'Item';
                  item['id'] = key1;
 
                  // get description
-                 if (data[key1]['http://purl.org/dc/terms/description']) {
-                   item['text'] = unescape(data[key1]['http://purl.org/dc/terms/description'][0]['value']);
+                 var title = data[key1]['http://purl.org/dc/elements/1.1/title'];
+                 var desc = data[key1]['http://purl.org/dc/terms/description'];
+                 if (!desc) desc = data[key1]['http://www.w3.org/2005/01/wf/flow#description']
+                 if (desc) {
+                   item['text'] = unescape(desc[0]['value']);
+                 }
+                 if (title) {
+                   item['text'] = unescape(title[0]['value']) + '\n' + item['text'];
                  }
 
                  // get complete
@@ -739,6 +747,22 @@ function displayUser(val) {
 
              }
           }
+
+          // assign items to columns
+          var col = 0;
+          for (var i = 0; i<items.length; i++) {
+            var orphan = true;
+            for (var j = 0; j<columns.length; j++) {
+              for (var k = 0; k<columns[j].items.length; k++) {
+                if (items[i].id == columns[j].items[k]) orphaned = false;
+              }
+            }
+            if (orphan) {
+              columns[col].items.push(items[i].id);
+              col = (col + 1) % 3;
+            }
+          }
+
 
           todo['items'] = items;
           todo['columns'] = columns;
