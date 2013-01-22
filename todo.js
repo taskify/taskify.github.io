@@ -483,8 +483,8 @@
 
 function displayUser(val) {
   window.user = val;
-  window.url = 'http://todo.data.fm/' + encodeURIComponent(val);
-  if (window.user.indexOf('dns:') == -1) { 
+
+  if (window.user.indexOf('dns:') == -1 ) { 
     $('#user').text(val).append('<b class="caret"></b>');
     $('#score').attr('href', 'http://taskify.org/c/dash.php?destination=' + escape(val));
   }
@@ -509,12 +509,20 @@ function displayUser(val) {
 
 
   var uris = localStorage.getItem('workspace');
-  if (uris) {
+  if (uris && ( window.user.indexOf('dns:') === -1 ||  document.domain.indexOf('public.taskify.org') !== -1 ) ) {
     uris = JSON.parse(uris);
-    $('#settings').parent().append('<li><a #0088CC" id="save" href="#">Save</a></li>');
-    $('#settings').parent().append('<li><a #0088CC" id="load" href="#">Load</a></li>');
+    $('#user').after('<ul class="dropdown-menu"><li id="action" class="nav-header">Action</li></ul>');
+    $('#user').attr('class', 'dropdown-toggle');
+    $('#user').attr('data-toggle', 'dropdown');
+
+    $('#action').parent().append('<li><a id="save" href="#">Save</a></li>');
+    $('#action').parent().append('<li><a id="load" href="#">Load</a></li>');
+    $('#action').parent().append('<li><a id="settings" href="cloud.html">Settings</a></li>');
     $('#load').attr('href', 'javascript:load(\''+ uris[0] +'\')');
     $('#save').attr('href', 'javascript:save(\''+ uris[0] +'\')');
+    if ( window.user.indexOf('dns:') !== -1 ) {
+      $('#user').text(val).append('<b class="caret"></b>');
+    }
   }
 }
 
