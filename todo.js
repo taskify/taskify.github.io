@@ -472,6 +472,7 @@
       wc = {'webcreditsuri' : ['http://taskify.org/c/'], 'today' : 0 };
     }
     localStorage.setItem('webcredits', JSON.stringify(wc));
+    $('#webcreditsuri').val(wc['webcreditsuri']);
 
     var script = document.createElement('script');
     script.src = 'https://taskify.org/common/user.js.php' + '?callback=displayUser';
@@ -490,6 +491,9 @@ function displayUser(val) {
   }
 
   ws = localStorage.getItem('workspace');
+  if (ws) {
+    ws = JSON.parse(ws);
+  }
   if (getParameterByName('workspace')) {
     ws = [];
     ws.push(getParameterByName('workspace'));
@@ -506,6 +510,8 @@ function displayUser(val) {
     ws.push('https://d.taskify.org/private/' + hex_sha1(window.user) + '/' + document.domain);
     localStorage.setItem('workspace', JSON.stringify(ws));
   }
+  $('#workspace').val(ws[0]);
+  $('#workspace').attr('size',ws[0].length);
 
 
   var uris = localStorage.getItem('workspace');
@@ -517,7 +523,7 @@ function displayUser(val) {
 
     $('#action').parent().append('<li><a id="save" href="#">Save</a></li>');
     $('#action').parent().append('<li><a id="load" href="#">Load</a></li>');
-    $('#action').parent().append('<li><a id="settings" href="cloud.html">Settings</a></li>');
+    $('#action').parent().append('<li><a href="#settings" data-toggle="modal">Settings</a></li>');
     $('#load').attr('href', 'javascript:load(\''+ uris[0] +'\')');
     $('#save').attr('href', 'javascript:save(\''+ uris[0] +'\')');
     if ( window.user.indexOf('dns:') !== -1 ) {
@@ -803,3 +809,12 @@ function getParameterByName(name) {
   else
     return decodeURIComponent(results[1].replace(/\+/g, " "));
 }
+
+
+function saveSettings() {
+  var workspace = $('#workspace').val();
+  var webcreditsuri = $('#webcreditsuri').val();
+  localStorage.setItem('workspace', JSON.stringify([workspace]));
+  localStorage.setItem('webcredits', JSON.stringify({ 'webcreditsuri': [ webcreditsuri ] }));
+}
+
