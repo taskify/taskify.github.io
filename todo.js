@@ -408,7 +408,7 @@
     if (webcredits) {
       webcredits=JSON.parse(webcredits);
       today = webcredits['today'];
-      if (!webcredits['webcreditsuri']) webcredits['webcreditsuri'] = ['http://taskify.org/c/'];
+      if (!webcredits['webcreditsuri']) webcredits['webcreditsuri'] = ['https://d.taskify.org/c/'];
     } else {
       webcredits = {};
     }
@@ -467,9 +467,9 @@
     wc = localStorage.getItem('webcredits');
     if (wc) {
       wc=JSON.parse(wc);
-      if (!wc['webcreditsuri']) wc['webcreditsuri'] = ['http://taskify.org/c/'];
+      if (!wc['webcreditsuri']) wc['webcreditsuri'] = ['https://d.taskify.org/c/'];
     } else {
-      wc = {'webcreditsuri' : ['http://taskify.org/c/'], 'today' : 0 };
+      wc = {'webcreditsuri' : ['https://d.taskify.org/c/'], 'today' : 0 };
     }
     localStorage.setItem('webcredits', JSON.stringify(wc));
     $('#webcreditsuri').val(wc['webcreditsuri']);
