@@ -1,4 +1,4 @@
-// * Copyright 2012 Melvin Carvalho and other contributors; Licensed LGPGv3
+// * Copyright 2012-2013 Melvin Carvalho and other contributors; Licensed LGPGv3
 (function($) {
   var lkp; // logs last key press event
   var currentfocus; // stores the currently focused item
