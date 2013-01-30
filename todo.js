@@ -204,7 +204,7 @@
   // default "first run" state
   if(!localStorage.getItem('todo')) {
     with (todo) {
-      var cols = [createColumn('Next Steps'),createColumn('Plans'),createColumn('Tasks')];
+      var cols = [createColumn('To Do'),createColumn('Doing'),createColumn('Done')];
       cols.forEach(function(col) {
         col.items.add( createItem('') );
         columns.add(col);
