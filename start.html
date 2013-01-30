@@ -289,7 +289,7 @@
             // connected
             console.log('Welcome!  Fetching your information.... ');
             FB.api('/me', function(response) {
-              var user = { '@id' : 'https://graph.facebook.com/' + response.id, 'name' : response.name };
+              var user = { '@id' : 'https://graph.facebook.com/' + response.id + '#', 'name' : response.name };
               localStorage.setItem('user', JSON.stringify(user));
               window.location.href = location.protocol + '//' + document.domain + '/';
             });
