@@ -267,6 +267,49 @@
 
   <body>
 
+<div id="fb-root"></div>
+<script>
+  // Additional JS functions here
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '447212718649324', // App ID
+      channelUrl : 'http://taskify.org/channel.html', // Channel File
+      status     : true, // check login status
+      cookie     : true, // enable cookies to allow the server to access the session
+      xfbml      : true  // parse XFBML
+    });
+
+    // Additional init code here
+
+  };
+
+  function login() {
+    FB.login(function(response) {
+        if (response.authResponse) {
+            // connected
+            console.log('Welcome!  Fetching your information.... ');
+            FB.api('/me', function(response) {
+              var user = { '@id' : 'https://graph.facebook.com/' + response.id, 'name' : response.name };
+              localStorage.setItem('user', JSON.stringify(user));
+              window.location.href = location.protocol + '//' + document.domain + '/';
+            });
+            //location.href = 'http://taskify.org/';
+        } else {
+            // cancelled
+        }
+    });
+  }
+
+  // Load the SDK Asynchronously
+  (function(d){
+     var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement('script'); js.id = id; js.async = true;
+     js.src = "//connect.facebook.net/en_US/all.js";
+     ref.parentNode.insertBefore(js, ref);
+   }(document));
+</script>
+
 
 
     <!-- NAVBAR
@@ -297,7 +340,7 @@
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sign In<b class="caret"></b></a>
                   <ul class="dropdown-menu">
                     <li><a href="/">WebID</a></li>
-                    <li><a href="javascript:alert('Facebook login coming soon!');">Facebook</a></li>
+                    <li><a href="javascript:login()">Facebook</a></li>
                     <li><a href="javascript:alert('Google login coming soon!')">Google</a></li>
                     <li class="divider"></li>
                     <li class="nav-header">Other</li>
