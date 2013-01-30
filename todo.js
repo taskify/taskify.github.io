@@ -1,4 +1,4 @@
-// * Copyright 2012 Melvin Carvalho and other contributors; Licensed MIT 
+// * Copyright 2012 Melvin Carvalho and other contributors; Licensed LGPGv3
 (function($) {
   var lkp; // logs last key press event
   var currentfocus; // stores the currently focused item
@@ -474,20 +474,30 @@
     localStorage.setItem('webcredits', JSON.stringify(wc));
     $('#webcreditsuri').val(wc['webcreditsuri']);
 
-    var script = document.createElement('script');
-    script.src = 'https://taskify.org/common/user.js.php' + '?callback=displayUser';
-    document.body.appendChild(script);
+    var user = localStorage.getItem('user');
+    if (user) {
+      user = JSON.parse(user);
+      displayUser(user);
+    } else {
+      var script = document.createElement('script');
+      script.src = 'https://taskify.org/common/user.js.php' + '?callback=getJSONP';
+      document.body.appendChild(script);
+    }
 
 
   });
 })(jQuery);
 
-function displayUser(val) {
-  window.user = val;
+function getJSONP(val) {
+  displayUser({ '@id' : val, 'name' : val });
+}
+
+function displayUser(user) {
+  window.user = user['@id'];
 
   if (window.user.indexOf('dns:') == -1 ) { 
-    $('#user').text(val).append('<b class="caret"></b>');
-    $('#score').attr('href', 'http://'+ document.domain  +'/c/dash?destination=' + escape(val));
+    $('#user').text(user['name']).append('<b class="caret"></b>');
+    $('#score').attr('href', 'http://'+ document.domain  +'/c/dash?destination=' + escape(user['@id']));
   }
 
   ws = localStorage.getItem('workspace');
@@ -524,10 +534,11 @@ function displayUser(val) {
     $('#action').parent().append('<li><a id="save" href="#">Save</a></li>');
     $('#action').parent().append('<li><a id="load" href="#">Load</a></li>');
     $('#action').parent().append('<li><a href="#settings" data-toggle="modal">Settings</a></li>');
+    $('#action').parent().append('<li><a href="javascript:logout()">Sign Out</a></li>');
     $('#load').attr('href', 'javascript:load(\''+ uris[0] +'\')');
     $('#save').attr('href', 'javascript:save(\''+ uris[0] +'\')');
     if ( window.user.indexOf('dns:') !== -1 ) {
-      $('#user').text(val).append('<b class="caret"></b>');
+      $('#user').text(window.user).append('<b class="caret"></b>');
     }
   }
 }
@@ -819,3 +830,7 @@ function saveSettings() {
   localStorage.setItem('webcredits', JSON.stringify({ 'webcreditsuri': [ webcreditsuri ] }));
 }
 
+function logout() {
+  localStorage.removeItem('user');
+  window.location.href = location.protocol + '//' + document.domain + '/start';
+}
