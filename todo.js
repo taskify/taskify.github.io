@@ -419,7 +419,7 @@
     mod = today % 25;
     str = '';  for(i=0; i<25; i+=5) str += mod > i ? '█' : '&nbsp;&nbsp;';
     $('#score').html(' Credits : ' + (today - mod) + '</a> ' + str + '|');
-    $('#score').attr('href', 'http://'+ document.domain +'/c/dash?destination='+ escape(window.user));
+    $('#score').attr('href', 'https://d.taskify.org/c/dash.php?destination='+ escape(window.user));
     hook = localStorage.getItem('hook');
     // add your own hook
     if (mod == 0) {
@@ -434,7 +434,7 @@
             webcredits['today'] = msg["responseText"];
             window.localStorage.setItem("webcredits", JSON.stringify(webcredits)) ; 
             $("#score").html(' Credits: ' + msg["responseText"]+ '</a>'); 
-            $('#score').attr('href', 'http://'+ document.domain +'/c/dash?destination='+ escape(window.user));
+            $('#score').attr('href', 'https://d.taskify.org/c/dash.php?destination='+ escape(window.user));
         }})
       }
     }
@@ -456,6 +456,7 @@
       return false;
     });
     $('.sortable').sortable({items:'> .item', handle:'.handle', connectWith:'.sortable', update:function() { resequence() } });
+    $('#simple-menu').sidr();
   }
 
   $(document).ready(function() {
@@ -533,7 +534,10 @@ function displayUser(user) {
 
     $('#action').parent().append('<li><a id="save" href="#">Save</a></li>');
     $('#action').parent().append('<li><a id="load" href="#">Load</a></li>');
+    $('#action').parent().append('<li class="divider"></li>');
     $('#action').parent().append('<li><a href="#settings" data-toggle="modal">Settings</a></li>');
+    $('#action').parent().append('<li><a href="#boards" data-toggle="modal">Boards</a></li>');
+    $('#action').parent().append('<li class="divider"></li>');
     $('#action').parent().append('<li><a href="javascript:logout()">Sign Out</a></li>');
     $('#load').attr('href', 'javascript:load(\''+ uris[0] +'\')');
     $('#save').attr('href', 'javascript:save(\''+ uris[0] +'\')');
@@ -541,6 +545,31 @@ function displayUser(user) {
       $('#user').text(window.user).append('<b class="caret"></b>');
     }
   }
+
+  var tasks = localStorage.getItem('tasktree');
+  if (tasks) {
+    tasks = JSON.parse(tasks);
+
+    // sort alg simple timestamp for now
+    tasks.sort(function(a,b) {
+      if (!a['modified']) return 1;
+      first = new Date(a['modified']);
+      second = new Date(b['modified']);
+      return second - first;
+    });
+
+    for (i=0; i<tasks.length; i++) {
+      var id = tasks[i]['@id'];
+      var modified = tasks[i]['modified'];
+      if (id.indexOf('tree.html') > 0) {
+        $('#boardlist').append('<div><a href="javascript:up(\'' +id+ '\')">↑</a> <a href="javascript:remove(\'' +id+ '\')">X</a> <a class="green" title="'+ moment(modified, "YYYY-MM-DDTHH:mm:ssZ").fromNow()  +'" href="' + id + '">' + id +'</a> <small>('+  moment(modified, "YYYY-MM-DDTHH:mm:ssZ").fromNow()  +')</small></div>');
+      } else {
+        $('#boardlist').first().append('<div><a href="javascript:up(\'' +id+ '\')">↑</a> <a href="javascript:remove(\'' +id+ '\')">X</a> <a title="'+ moment(modified, "YYYY-MM-DDTHH:mm:ssZ").fromNow()  +'" href="' + id + '">' + id +'</a> <small>('+  moment(modified, "YYYY-MM-DDTHH:mm:ssZ").fromNow()  +')</small></div>');
+        $('#sidr').first().append('<div><a href="javascript:up(\'' +id+ '\')">↑</a> <a href="javascript:remove(\'' +id+ '\')">X</a> <a title="'+ moment(modified, "YYYY-MM-DDTHH:mm:ssZ").fromNow()  +'" href="' + id + '">' + id +'</a> </div>');
+      }  
+    }
+  }
+
 }
 
 // TODO cleanup
@@ -834,3 +863,48 @@ function logout() {
   localStorage.removeItem('user');
   window.location.href = location.protocol + '//' + document.domain + '/start';
 }
+
+function remove(list) {
+  var tasks = localStorage.getItem('tasktree');
+  if (tasks) {
+    tasks = JSON.parse(tasks);
+    for (i=0; i<tasks.length; i++) {
+      if (tasks[i]['@id'] == list) {
+        tasks.splice(i,1);
+        localStorage.setItem('tasktree', JSON.stringify(tasks));
+        location.reload();
+      }
+    }
+  }
+}
+
+function up(uri) {
+  tasks= localStorage.getItem('tasktree');
+  if (tasks) {
+    tasks = JSON.parse(tasks);
+    for(var i=0; i<tasks.length; i++) {
+      if (tasks[i]['@id'] == uri) {
+        tasks[i]['modified'] = new Date().toISOString();
+      }
+    }
+    localStorage.setItem('tasktree', JSON.stringify(tasks));
+    location.reload();
+  }
+}
+
+
+function saveBoards() {
+  task = $('#boarduri').val();
+  tasks= localStorage.getItem('tasktree');
+  if (tasks) {
+    tasks = JSON.parse(tasks);
+    tasks.push({'@id': task, 'modified' : new Date().toISOString() });
+    localStorage.setItem('tasktree', JSON.stringify(tasks));
+  } else {
+    localStorage.setItem('tasktree', JSON.stringify([{'@id': task, 'modified' : new Date().toISOString() }]));
+  }
+  location.reload();
+  return false;
+}
+
+

@@ -10,6 +10,7 @@
   <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet">
   <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css" rel="stylesheet">
   <link href="http://code.jquery.com/ui/1.9.0/themes/base/jquery-ui.css" rel="stylesheet">
+  <link href="jquery.sidr.dark.css" rel="stylesheet">
   <link href="libnotify.css" rel="stylesheet">
   <link href="todo.css" rel="stylesheet">
   <!--[if lt IE 9]>
@@ -20,8 +21,10 @@
   <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap.min.js" type="text/javascript"></script>
   <script src="jquery.autosize.js" type="text/javascript"></script>
   <script src="humane.min.js" type="text/javascript"></script>
+  <script src="https://raw.github.com/timrwood/moment/1.7.2/min/moment.min.js " type="text/javascript"></script>
   <script src="sha1.js" type="text/javascript"></script>
   <script src="todo.js" type="text/javascript"></script>
+  <script src="jquery.sidr.js" type="text/javascript"></script>
 
 </head>
 <body>
@@ -79,8 +82,7 @@
 
     </div>
   </div>
-
-  <!-- Modal -->
+  <!-- Settings -->
   <div id="settings" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="settingsLabel" aria-hidden="true">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -97,5 +99,29 @@
     </div>
   </div>
 
+  <!-- Boards -->
+  <div id="boards" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="boardsLabel" aria-hidden="true">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      <h3 id="boardsLabel">Boards</h3>
+    </div>
+    <div class="modal-body">
+      <p id="boardlist">My Boards</p>
+      <p>Add a board (e.g. http://today.taskify.org/ )<form onSubmit='javascript:return false;'><input id="boarduri"/></form></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+      <button onclick='saveBoards()' class="btn btn-primary">Save changes</button>
+    </div>
+  </div>
+
+  <a id="simple-menu" href="#sidr">Sidebar</a>
+ 
+  <div id="sidr">
+    <!-- Your content -->
+    <ul>
+    </ul>
+  </div>
+ 
 </body> 
 </html> 
