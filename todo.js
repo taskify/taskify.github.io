@@ -316,6 +316,18 @@
                 addpoints();
               }
             })
+            .keypress(function(ev) {
+              if (!(ev.which == 115 && ev.ctrlKey) && !(ev.which == 19)) return true;
+              eval($('#save').attr('href'));
+              ev.preventDefault();
+              return false;
+            })
+            .keypress(function(ev) {
+              if (!(ev.which == 108 && ev.ctrlKey) && !(ev.which == 19)) return true;
+              eval($('#load').attr('href'));
+              ev.preventDefault();
+              return false;
+            })
             .keyup(function(ev) {
               var log = true;
               if(lkp && lkp.target && lkp.which) {
