@@ -1,0 +1,94 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/core-ajax/core-ajax.html">
+<link rel="import" href="bower_components/paper-button/paper-button.html">
+<link rel="import" href="bower_components/core-overlay/core-overlay.html">
+<link rel="import" href="bower_components/core-icon-button/core-icon-button.html">
+<link rel="import" href="bower_components/core-label/core-label.html">
+<link rel="import" href="bower_components/core-transition/core-transition.html">
+
+<polymer-element name="webid-login">
+  <template>
+    <style>
+
+    </style>
+
+    <div id="loginHeader" layout horizontal center-justified hidden>
+      <content select="h2" layout vertical center><h2></h2></content>
+    </div>
+    <content></content>
+    <core-ajax id="ajaxLogin" url="https://rww.io/" on-core-response="{{ajaxLoginResponse}}" on-core-complete="{{ajaxLoginDone}}"></core-ajax>
+      <span id="loginButton" onclick="doLogin()" center>Authenticate with WebID</span>
+
+  </template>
+  <script>
+
+  Polymer({
+    ajaxLoginResponse: function(e, r) {
+      var user = r.xhr.getResponseHeader('User'); // look for User: header
+      if (user) {
+        this.$.loginHeader.hidden = false;
+        // auth object
+        var authData = {
+          "auth": "WebID-TLS",
+          "success": false
+        };
+        // got a WebID
+        if (user.substr(0, 4) === 'http') {
+          this.$.loginHeader.querySelector('h2').innerHTML = '<span class="greencolor">Authenticated WebID:</span> <a href="'+user+'" target="blank">'+user+'</a>';
+          authData.success = true;
+          authData.user = user;
+        } else {
+          // Auth failed
+          this.$.loginHeader.querySelector('h2').innerHTML = 'Authentication failed. Try using the <a href="https://auth.my-profile.eu/auth/index.php?verbose=on" target="blank">debugger</a> to find the cause.';
+        }
+
+        // legacy postMessage way
+        if (getParam('ref').length > 0) {
+          parent.postMessage('User:'+user, getParam('ref')); // pass WebID to the parent window
+          parent.postMessage('Close', getParam('ref')); // signal to close the modal
+        }
+        // create and send event to parent window (also to escape shadowDOM)
+        try {
+          var evt = new CustomEvent("WebIDAuth", {"detail": authData});
+          parent.window.dispatchEvent(evt);
+        } catch (e) {
+          // silent drop for dispatchEvent errors due to CORS
+        }
+      }
+    },
+    ajaxLoginDone: function() {
+      this.$.loginButton.innerHTML = "Authenticate with WebID";
+    }
+  });
+
+  doLogin = function() {
+    var l = document.querySelector("webid-login");
+    l.$.loginButton.innerHTML = "Authenticating..."
+
+    var ajax = l.$.ajaxLogin;
+    ajax.method = 'HEAD';
+    ajax.headers = '{"Accept": "*/*"}';
+    ajax.withCredentials = true;
+    ajax.go(); // call the API
+  }
+
+  getParam = function(name) {
+    name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+    var regexS = "[\\?&]"+name+"=([^&#]*)";
+    var regex = new RegExp(regexS);
+    var results = regex.exec(window.location.href);
+    if( results == null ) {
+      return "";
+    } else {
+      return decodeURIComponent(results[1]);
+    }
+  }
+
+  function webidInfo() {
+    var l = document.querySelector("webid-login");
+    var h = l.$.webidinfo.toggle();
+  }
+
+
+  </script>
+</polymer-element>

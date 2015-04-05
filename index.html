@@ -1,8 +1,9 @@
-<!DOCTYPE html> 
-<!-- 
-// * Copyright 2012-2013 Melvin Carvalho and other contributors; Licensed LGPGv3
+
+<!DOCTYPE html>
+<!--
+// * Copyright 2012-2015 Melvin Carvalho and other contributors; Licensed LGPGv3
 -->
-<html> 
+<html>
 <head>
   <title>Taskify</title>
   <meta charset="utf-8">
@@ -10,21 +11,25 @@
   <link href="css/bootstrap.css" rel="stylesheet">
   <link href="css/bootstrap-responsive.css" rel="stylesheet">
   <link href="http://code.jquery.com/ui/1.9.0/themes/base/jquery-ui.css" rel="stylesheet">
-  <link href="jquery.sidr.dark.css" rel="stylesheet">
-  <link href="libnotify.css" rel="stylesheet">
-  <link href="todo.css" rel="stylesheet">
+  <link href="css/jquery.sidr.dark.css" rel="stylesheet">
+  <link href="css/libnotify.css" rel="stylesheet">
+  <link href="css/todo.css" rel="stylesheet">
   <!--[if lt IE 9]>
+	<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js" type="text/javascript"></script>
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
+	<script src="app/vendor/rdflib.js/rdflib.js"></script>
   <script src="http://code.jquery.com/jquery-1.8.2.js" type="text/javascript"></script>
   <script src="http://code.jquery.com/ui/1.9.0/jquery-ui.js" type="text/javascript"></script>
-  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js" type="text/javascript"></script>
-  <script src="jquery.autosize.js" type="text/javascript"></script>
-  <script src="humane.min.js" type="text/javascript"></script>
+  <script src="app/vendor/jquery.autosize.js" type="text/javascript"></script>
+  <script src="app/vendor/humane.min.js" type="text/javascript"></script>
   <script src="https://raw.github.com/timrwood/moment/1.7.2/min/moment.min.js " type="text/javascript"></script>
-  <script src="sha1.js" type="text/javascript"></script>
-  <script src="todo.js" type="text/javascript"></script>
-  <script src="jquery.sidr.js" type="text/javascript"></script>
+  <script src="app/vendor/sha1.js" type="text/javascript"></script>
+  <script src="app/todo.js" type="text/javascript"></script>
+  <script src="app/vendor/jquery.sidr.js" type="text/javascript"></script>
+	<link rel="import" href="login.html">
+
+	<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
 </head>
 <body>
@@ -53,10 +58,13 @@
 
           <ul class="nav pull-right">
             <li class="dropdown">
-              <a id="user" target="_blank" href="https://my-profile.eu/profile.php">Click here to get a Web Identity!</b></a>
+              <a id="user" ><webid-login></webid-login></a>
+
+
             </li>
 
-          </ul> 
+          </ul>
+
           <form class="form-inline pull-left" id="newtagform">
 <!--
           <div class="btn-group input-append">
@@ -77,6 +85,8 @@
 
     </div>
   </div>
+
+
 
   <div class="container-fluid">
     <div class="row-fluid" id="columns">
@@ -117,18 +127,18 @@
   </div>
 
   <a id="simple-menu" href="#sidr">Sidebar</a>
- 
+
   <div id="sidr">
     <!-- Your content -->
     <ul>
     </ul>
   </div>
- 
+
 <script src="https://togetherjs.com/togetherjs.js"></script>
 <script>
 TogetherJSConfig_getUserName = function () {return 'Taskify User';};
 document.getElementById("collaborate")
   .addEventListener("click", TogetherJS, false);
 </script>
-</body> 
-</html> 
+</body>
+</html>
