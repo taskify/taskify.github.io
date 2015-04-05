@@ -529,7 +529,10 @@ function addpoints(points) {
     $('#webcreditsuri').val(wc['webcreditsuri']);
 
     var user = localStorage.getItem('user');
-    if (user) {
+    var webid = localStorage.getItem('webid');
+    if (webid) {
+      getJSONP(webid);
+    } else if (user) {
       user = JSON.parse(user);
       displayUser(user);
     } else {
@@ -554,6 +557,7 @@ function getJSONP(val) {
 
 function displayUser(user) {
   window.user = user['@id'];
+  localStorage.setItem('webid', window.user);
 
   if (window.user.indexOf('dns:') == -1 ) {
     $('#user').text(user['name']).append('<b class="caret"></b>');
