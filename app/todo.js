@@ -27,7 +27,7 @@ $rdf.Fetcher.crossSiteProxyTemplate=PROXY;
 var g = $rdf.graph();
 var f = $rdf.fetcher(g);
 
-defaultWebcreditsuri = 'https://klaranet.com/api/v1/'; // configurable
+defaultWebcreditsuri = 'http://klaranet.com/api/v1/'; // configurable
 
 // * Copyright 2012-2015 Melvin Carvalho and other contributors; Licensed LGPGv3
 (function($) {
