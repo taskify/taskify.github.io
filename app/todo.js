@@ -462,7 +462,7 @@ function addpoints(points) {
   mod = today % 25;
   str = '';  for(i=0; i<25; i+=5) str += mod > i ? '█' : '&nbsp;&nbsp;';
   $('#score').html(' Credits : ' + (today - mod) + '</a> ' + str + '|');
-  $('#score').attr('href', 'https://d.taskify.org/c/dash.php?destination='+ escape(window.user));
+  //$('#score').attr('href', 'https://d.taskify.org/c/dash.php?destination='+ escape(window.user));
   hook = localStorage.getItem('hook');
   // add your own hook
   if (mod == 0) {
@@ -471,13 +471,15 @@ function addpoints(points) {
       eval(hook);
     } else if ( window.user ) {
       $.ajax({
-        url:webcredits['webcreditsuri'][0] + "?destination="+escape(window.user) + "&referrer=" + escape(window.location.protocol + '//' + window.location.hostname),
+        url:webcredits['webcreditsuri'][0] + "balance?uri="+escape(window.user) + "&referrer=" + escape(window.location.protocol + '//' + window.location.hostname),
         complete: function (msg) {
+          var m = JSON.parse(msg.responseText);
           webcredits = JSON.parse(localStorage.getItem('webcredits')) || {};
-          webcredits['today'] = msg["responseText"];
+          webcredits['today'] = msg["amount"];
           window.localStorage.setItem("webcredits", JSON.stringify(webcredits)) ;
-          $("#score").html(' Credits: ' + msg["responseText"]+ '</a>');
-          $('#score').attr('href', 'https://d.taskify.org/c/dash.php?destination='+ escape(window.user));
+          console.log(m);
+          $("#score").html(' Credits: ' + m['amount']);
+          //$('#score').attr('href', 'https://d.taskify.org/c/dash.php?destination='+ escape(window.user));
         }})
       }
     }
