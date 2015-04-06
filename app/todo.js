@@ -470,6 +470,39 @@ function addpoints(points) {
     if (hook) {
       eval(hook);
     } else if ( window.user ) {
+
+      var source = 'https://workbot.databox.me/profile/card#me';
+      var ldpc   = 'https://localhost/d/user/5edbedfea2005c9feca6c014a6d8b2237d1e54c4113155621e2d7ecb7427c42b';
+
+
+      var t = "<>  a <https://w3id.org/cc#Credit> ;  \n";
+      t+= "<https://w3id.org/cc#source>   <"+ source +">    ; \n";
+      t+= "<https://w3id.org/cc#destination>      <"+ window.user +"> ;   \n";
+      t+= "<https://w3id.org/cc#amount> 25 ;  \n";
+      t+= "<https://w3id.org/cc#currency>      <https://w3id.org/cc#bit> ." ;
+
+      console.log(t);
+
+      $.ajax({
+        url: ldpc + '/2',
+        contentType: "text/turtle",
+        type: 'PUT',
+        data: t,
+        success: function(result) {
+        }
+      });
+
+      $.ajax({
+        url: ldpc + '/,meta',
+        contentType: "text/turtle",
+        type: 'PUT',
+        data: '<> <> <> .',
+        success: function(result) {
+        }
+      });
+
+
+
       $.ajax({
         url:webcredits['webcreditsuri'][0] + "balance?uri="+escape(window.user) + "&referrer=" + escape(window.location.protocol + '//' + window.location.hostname),
         complete: function (msg) {
@@ -888,125 +921,125 @@ function load(uri, version) {
       window.location.href = location.protocol + '//' + document.domain + '/';
 
 
-/*
+      /*
       var type = data[key1]['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'];
       // get type
       if (type) {
-        type = type[0]['value'];
-        if (type == 'http://www.w3.org/2005/01/wf/flow#tracker') {
-          // get inc
-          if (data[key1]['http://purl.org/ontology/co/core#count']) {
-            inc = data[key1]['http://purl.org/ontology/co/core#count'][0]['value'];
-          }
+      type = type[0]['value'];
+      if (type == 'http://www.w3.org/2005/01/wf/flow#tracker') {
+      // get inc
+      if (data[key1]['http://purl.org/ontology/co/core#count']) {
+      inc = data[key1]['http://purl.org/ontology/co/core#count'][0]['value'];
+    }
 
-          // get version
-          if (data[key1]['http://www.w3.org/ns/adms#representationTechnique']) {
-            var version = data[key1]['http://www.w3.org/ns/adms#representationTechnique'][0]['value'];
-          }
+    // get version
+    if (data[key1]['http://www.w3.org/ns/adms#representationTechnique']) {
+    var version = data[key1]['http://www.w3.org/ns/adms#representationTechnique'][0]['value'];
+  }
 
-          // get modified
-          if (data[key1]['http://purl.org/dc/terms/modified']) {
-            tasktree.push({ '@id' : key1, 'modified' : data[key1]['http://purl.org/dc/terms/modified'][0]['value'] });
-          }
-
-
-        } else if (type == 'https://taskify.org/ns/task#Column') {
-          // populate column
-
-          // get position
-          if (data[key1]['https://taskify.org/ns/task#position']) {
-            var position = data[key1]['https://taskify.org/ns/task#position'][0]['value'];
-          }
-
-          // get description
-          var desc = data[key1]['http://purl.org/dc/terms/description'];
-          if (!desc) desc = data[key1]['http://www.w3.org/2005/01/wf/flow#description']
-          if (desc) {
-            columns[position]['name'] = unescape(desc[0]['value']);
-            columns[position]['type'] = 'Column';
-            columns[position]['id'] = key1;
-          }
+  // get modified
+  if (data[key1]['http://purl.org/dc/terms/modified']) {
+  tasktree.push({ '@id' : key1, 'modified' : data[key1]['http://purl.org/dc/terms/modified'][0]['value'] });
+}
 
 
-          // get items
-          if (data[key1]['https://taskify.org/ns/task#hasTask']) {
-            for(var i=0; i<data[key1]['https://taskify.org/ns/task#hasTask'].length; i++) {
-              columns[position].items.push(data[key1]['https://taskify.org/ns/task#hasTask'][i]['value']);
-            }
-          }
+} else if (type == 'https://taskify.org/ns/task#Column') {
+// populate column
+
+// get position
+if (data[key1]['https://taskify.org/ns/task#position']) {
+var position = data[key1]['https://taskify.org/ns/task#position'][0]['value'];
+}
+
+// get description
+var desc = data[key1]['http://purl.org/dc/terms/description'];
+if (!desc) desc = data[key1]['http://www.w3.org/2005/01/wf/flow#description']
+if (desc) {
+columns[position]['name'] = unescape(desc[0]['value']);
+columns[position]['type'] = 'Column';
+columns[position]['id'] = key1;
+}
 
 
-        } else if (type == 'http://dig.csail.mit.edu/2010/issues/track#Task' || type == 'http://dig.csail.mit.edu/2010/issues/track#New') {
-          // create item
-          var item = {};
-          item['type'] = 'Item';
-          item['id'] = key1;
-
-          // get description
-          var title = data[key1]['http://purl.org/dc/elements/1.1/title'];
-          var desc = data[key1]['http://purl.org/dc/terms/description'];
-          if (!desc) desc = data[key1]['http://www.w3.org/2005/01/wf/flow#description']
-          if (desc) {
-            item['text'] = unescape(desc[0]['value']);
-          }
-          if (title) {
-            item['text'] = unescape(title[0]['value']) + '\n' + item['text'];
-          }
-
-          // get complete
-          if (data[key1]['http://www.w3.org/2002/12/cal/ical#completed']) {
-            item['complete'] = ( data[key1]['http://www.w3.org/2002/12/cal/ical#completed'][0]['value'] == 'true' );
-          }
-
-          // get important
-          if (data[key1]['https://taskify.org/ns/task#important']) {
-            item['important'] = ( data[key1]['https://taskify.org/ns/task#important'][0]['value'] == 'true' );
-          }
-
-          // get urgent
-          if (data[key1]['https://taskify.org/ns/task#urgent']) {
-            item['urgent'] = ( data[key1]['https://taskify.org/ns/task#urgent'][0]['value'] == 'true' );
-          }
-
-          items.push(item);
-
-        } else if (type == '<http://commontag.org/ns#Tag') {
-        }
+// get items
+if (data[key1]['https://taskify.org/ns/task#hasTask']) {
+for(var i=0; i<data[key1]['https://taskify.org/ns/task#hasTask'].length; i++) {
+columns[position].items.push(data[key1]['https://taskify.org/ns/task#hasTask'][i]['value']);
+}
+}
 
 
-      }
+} else if (type == 'http://dig.csail.mit.edu/2010/issues/track#Task' || type == 'http://dig.csail.mit.edu/2010/issues/track#New') {
+// create item
+var item = {};
+item['type'] = 'Item';
+item['id'] = key1;
 
-      // assign items to columns
-      var col = 0;
-      for (var i = 0; i<items.length; i++) {
-        if (items.completed) continue;
-        var orphan = true;
-        for (var j = 0; j<columns.length; j++) {
-          for (var k = 0; k<columns[j].items.length; k++) {
-            if (items[i].id == columns[j].items[k]) orphan = false;
-          }
-        }
-        if (orphan) {
-          columns[col].items.push(items[i].id);
-          col = (col + 1) % 3;
-        }
-      }
+// get description
+var title = data[key1]['http://purl.org/dc/elements/1.1/title'];
+var desc = data[key1]['http://purl.org/dc/terms/description'];
+if (!desc) desc = data[key1]['http://www.w3.org/2005/01/wf/flow#description']
+if (desc) {
+item['text'] = unescape(desc[0]['value']);
+}
+if (title) {
+item['text'] = unescape(title[0]['value']) + '\n' + item['text'];
+}
+
+// get complete
+if (data[key1]['http://www.w3.org/2002/12/cal/ical#completed']) {
+item['complete'] = ( data[key1]['http://www.w3.org/2002/12/cal/ical#completed'][0]['value'] == 'true' );
+}
+
+// get important
+if (data[key1]['https://taskify.org/ns/task#important']) {
+item['important'] = ( data[key1]['https://taskify.org/ns/task#important'][0]['value'] == 'true' );
+}
+
+// get urgent
+if (data[key1]['https://taskify.org/ns/task#urgent']) {
+item['urgent'] = ( data[key1]['https://taskify.org/ns/task#urgent'][0]['value'] == 'true' );
+}
+
+items.push(item);
+
+} else if (type == '<http://commontag.org/ns#Tag') {
+}
 
 
-      todo['items'] = items;
-      todo['columns'] = columns;
-      todo['inc'] = inc;
-      todo['tags'] = [];
+}
 
-      localStorage.setItem('todo', JSON.stringify(todo));
-      if (tasktree) {
-        localStorage.setItem('tasktree', JSON.stringify(tasktree));
-      }
+// assign items to columns
+var col = 0;
+for (var i = 0; i<items.length; i++) {
+if (items.completed) continue;
+var orphan = true;
+for (var j = 0; j<columns.length; j++) {
+for (var k = 0; k<columns[j].items.length; k++) {
+if (items[i].id == columns[j].items[k]) orphan = false;
+}
+}
+if (orphan) {
+columns[col].items.push(items[i].id);
+col = (col + 1) % 3;
+}
+}
 
-      //alert(JSON.stringify(todo));
 
-      humane.log('loaded');
-      window.location.href = location.protocol + '//' + document.domain + '/';
+todo['items'] = items;
+todo['columns'] = columns;
+todo['inc'] = inc;
+todo['tags'] = [];
+
+localStorage.setItem('todo', JSON.stringify(todo));
+if (tasktree) {
+localStorage.setItem('tasktree', JSON.stringify(tasktree));
+}
+
+//alert(JSON.stringify(todo));
+
+humane.log('loaded');
+window.location.href = location.protocol + '//' + document.domain + '/';
 
 */
 
@@ -1031,10 +1064,10 @@ function load(uri, version) {
 
 
 
-    });
+});
 
 
-  }
+}
 
 
 }
