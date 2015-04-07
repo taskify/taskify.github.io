@@ -29,7 +29,49 @@ var f = $rdf.fetcher(g);
 
 defaultWebcreditsuri = 'http://klaranet.com/api/v1/'; // configurable
 
-// * Copyright 2012-2015 Melvin Carvalho and other contributors; Licensed LGPGv3
+
+
+var action      = getParam('action'); // show friends or chat
+var avatar      = getParam('avatar');
+var ldpc        = getParam('ldpc');
+var name        = getParam('name');
+var presenceURI = getParam('presenceURI');
+var seeAlso     = getParam('seeAlso') || getParam('invite');
+var title       = getParam('title');
+var webid       = getParam('webid');
+var wss         = getParam('wss');
+
+
+var template = {};
+
+template.init = {
+  action      : action,
+  avatar      : avatar,
+  ldpc        : ldpc,
+  name        : name,
+  seeAlso     : seeAlso,
+  title       : title,
+  webid       : webid,
+  wss         : wss
+};
+
+template.settings = {
+  avatar      : template.init.avatar,
+  action      : template.init.action,
+  ldpc        : template.init.ldpc,
+  name        : template.init.name,
+  seeAlso     : template.init.seeAlso,
+  title       : template.init.title,
+  webid       : template.init.webid,
+  wss         : template.init.wss
+};
+
+
+// for tasks
+var defaultLdpc = 'https://klaranet.com/d/taskify/'; // hard code for now until more websockets are there
+
+
+// * Copyright 2012-2015 Melvin Carvalho and other contributors; Licensed MIT
 (function($) {
   var lkp; // logs last key press event
   var currentfocus; // stores the currently focused item
@@ -471,36 +513,40 @@ function addpoints(points) {
       eval(hook);
     } else if ( window.user ) {
 
-      var source = 'https://workbot.databox.me/profile/card#me';
-      var ldpc   = 'https://localhost/d/user/5edbedfea2005c9feca6c014a6d8b2237d1e54c4113155621e2d7ecb7427c42b';
+      if (template.settings.ldpc) {
+        var ldpc   = template.settings.ldpc;
+        var source = 'https://workbot.databox.me/profile/card#me';
+        var hash   = CryptoJS.SHA256(window.user);
+        var uri    = ldpc + hash + '/';
+        var amount = 25;
 
 
-      var t = "<>  a <https://w3id.org/cc#Credit> ;  \n";
-      t+= "<https://w3id.org/cc#source>   <"+ source +">    ; \n";
-      t+= "<https://w3id.org/cc#destination>      <"+ window.user +"> ;   \n";
-      t+= "<https://w3id.org/cc#amount> 25 ;  \n";
-      t+= "<https://w3id.org/cc#currency>      <https://w3id.org/cc#bit> ." ;
+        var t = "<>  a <https://w3id.org/cc#Credit> ;  \n";
+        t+= "<https://w3id.org/cc#source>   <"+ source +">    ; \n";
+        t+= "<https://w3id.org/cc#destination>      <"+ window.user +"> ;   \n";
+        t+= "<https://w3id.org/cc#amount> "+ amount +" ;  \n";
+        t+= "<https://w3id.org/cc#currency>      <https://w3id.org/cc#bit> ." ;
 
-      console.log(t);
+        console.log(t);
 
-      $.ajax({
-        url: ldpc + '/2',
-        contentType: "text/turtle",
-        type: 'PUT',
-        data: t,
-        success: function(result) {
-        }
-      });
+        $.ajax({
+          url: uri + '2',
+          contentType: "text/turtle",
+          type: 'PUT',
+          data: t,
+          success: function(result) {
+          }
+        });
 
-      $.ajax({
-        url: ldpc + '/,meta',
-        contentType: "text/turtle",
-        type: 'PUT',
-        data: '<> <> <> .',
-        success: function(result) {
-        }
-      });
-
+        $.ajax({
+          url: uri + ',meta',
+          contentType: "text/turtle",
+          type: 'PUT',
+          data: '<> <> <> .',
+          success: function(result) {
+          }
+        });
+      }
 
 
       $.ajax({
