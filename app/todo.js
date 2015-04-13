@@ -660,7 +660,7 @@ function displayUser(user) {
   }
   if (!ws) {
     ws= [];
-    ws.push('https://klaranet.com/d/taskify/' + hex_sha1(window.user) + '/' + document.domain);
+    ws.push('https://klaranet.com/d/taskify/' + CryptoJS.SHA256(window.user) + '/' + document.domain);
     localStorage.setItem('workspace', JSON.stringify(ws));
   }
   $('#workspace').val(ws[0]);
