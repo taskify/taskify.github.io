@@ -514,17 +514,19 @@ function addpoints(points) {
     } else if ( window.user ) {
 
       if (template.settings.ldpc) {
-        var ldpc   = template.settings.ldpc;
-        var source = 'https://workbot.databox.me/profile/card#me';
-        var hash   = CryptoJS.SHA256(window.user);
-        var uri    = ldpc + hash + '/';
-        var amount = 25;
+        var ldpc    = template.settings.ldpc;
+        var source  = 'https://workbot.databox.me/profile/card#me';
+        var hash    = CryptoJS.SHA256(window.user);
+        var uri     = ldpc + hash + '/';
+        var amount  = 25;
+        var comment = document.domain;
 
 
         var t = "<>  a <https://w3id.org/cc#Credit> ;  \n";
         t+= "<https://w3id.org/cc#source>   <"+ source +">    ; \n";
         t+= "<https://w3id.org/cc#destination>      <"+ window.user +"> ;   \n";
         t+= "<https://w3id.org/cc#amount> "+ amount +" ;  \n";
+        t+= "<http://www.w3.org/2000/01/rdf-schema#comment> '"+ comment +"' ;  \n";
         t+= "<https://w3id.org/cc#currency>      <https://w3id.org/cc#bit> ." ;
 
         console.log(t);
