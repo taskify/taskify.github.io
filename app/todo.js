@@ -109,13 +109,13 @@ var defaultLdpc = 'https://klaranet.com/d/taskify/'; // hard code for now until 
             index[o.id] = o;
             if(!references) {
               var _ = this;
-              o.onchange = function() { _._state_change() }; // trigger an onchange event when contained items change
+              o.onchange = function() { _._state_change(); }; // trigger an onchange event when contained items change
             }
             order.push(o.id);
             this._state_change();
             return this;
           }},
-          get: { writable: false, configurable: false, enumerable: true, value: function(k) { return index[k] } },
+          get: { writable: false, configurable: false, enumerable: true, value: function(k) { return index[k]; } },
           empty: { writable: false, configurable: false, enumerable: true, value: function() {
             index = {};
             order = [];
@@ -124,16 +124,16 @@ var defaultLdpc = 'https://klaranet.com/d/taskify/'; // hard code for now until 
           }},
           exists: { writable: false, configurable: false, enumerable: true, value: function(o) {
             if(!this.testType(o)) return false;
-            return index.hasOwnProperty(o.id)
+            return index.hasOwnProperty(o.id);
           }},
           keys: { writable: false, configurable: false, enumerable: true, value: function(proto) {
             var keys = [];
             proto = !proto;
             for(var i in index) {
-              if(proto && Object.prototype[i]) { continue }
-              keys.push(i)
+              if(proto && Object.prototype[i]) { continue; }
+              keys.push(i);
             }
-            return keys
+            return keys;
           }},
           forEach: { writable: false, configurable: false, enumerable: true, value: function(f) {
             for(k in order) f(index[order[k]],order[k],this);
