@@ -150,9 +150,9 @@ var defaultLdpc = 'https://klaranet.com/d/taskify/'; // hard code for now until 
           toArray: { writable: false, configurable: false, enumerable: true, value: function() {
             var a = [];
             for(k in order) a.push(index[order[k]]);
-            return a
+            return a;
           }},
-          toString: { writable: false, configurable: false, enumerable: false, value: function() { return JSON.stringify(this.toArray()) } },
+          toString: { writable: false, configurable: false, enumerable: false, value: function() { return JSON.stringify(this.toArray()); } },
           toJSON: { writable: false, configurable: false, enumerable: false, value: function() {
             return references ? order : this.toArray();
           }},
@@ -170,7 +170,7 @@ var defaultLdpc = 'https://klaranet.com/d/taskify/'; // hard code for now until 
             for(i in refs) items.add( todo.items.get(refs[i]));
           }},
         });
-        items.onchange = function() { c._state_change() };
+        items.onchange = function() { c._state_change(); };
         return c;
       },
       Tag: function(id) {
@@ -217,7 +217,7 @@ var defaultLdpc = 'https://klaranet.com/d/taskify/'; // hard code for now until 
           }},
           toString: { writable: false, configurable: false, enumerable: false, value: function() { return JSON.stringify(this) } },
         });
-        tags.onchange = function() { c._state_change() };
+        tags.onchange = function() { c._state_change(); };
         return c;
       },
       createColumn: function(name) {
@@ -281,7 +281,7 @@ var defaultLdpc = 'https://klaranet.com/d/taskify/'; // hard code for now until 
       cols.forEach(function(col) {
         col.items.add( createItem('') );
         columns.add(col);
-      })
+      });
     }
   }
   // presentation control
@@ -293,7 +293,7 @@ var defaultLdpc = 'https://klaranet.com/d/taskify/'; // hard code for now until 
       return a;
     }
     var current = $('.tag[data-id="'+tag.id+'"]');
-    if(current.length == 0) current = tagTemplate(tag);
+    if(current.length === 0) current = tagTemplate(tag);
     $('.tag-name', current).text( tag.name );
     return current;
   }
@@ -303,13 +303,13 @@ var defaultLdpc = 'https://klaranet.com/d/taskify/'; // hard code for now until 
       .append( $('<h2 class="column-name" contenteditable="true"></h2>').keypress(function(ev) {
         if(ev.which == 13) return false;
       }).keyup( function(ev) {
-        column.name = $(this).text()
+        column.name = $(this).text();
       }))
       .append( $('<div class="items sortable">') );
       return a;
     }
     var current = $('.column[data-id="'+column.id+'"]');
-    if(current.length == 0) current = columnTemplate(column);
+    if(current.length === 0) current = columnTemplate(column);
     $('.column-name', current).text( column.name );
     column.items.forEach(function(item) {
       $('.items', current).append( displayItem(item) );
@@ -407,7 +407,7 @@ $('.item[data-id='+item.id+'] .taglist').append(menu);
       if(lkp.target == ev.target && lkp.which == ev.which) {
         if(ev.which == 13) {
           stopEvent(ev);
-          item.text = $(this).val().replace(/^[\r\n]+|\.|[\r\n]+$/,'')
+          item.text = $(this).val().replace(/^[\r\n]+|\.|[\r\n]+$/,'');
           var _i = $('.item[data-id="'+item.id+'"]');
           var newitem = todo.createItem();
           todo.columns.get( _i.parents('.column').data('id') ).items.add( newitem );
@@ -420,7 +420,7 @@ $('.item[data-id='+item.id+'] .taglist').append(menu);
     }
     if(log) {
       lkp = {target: ev.target, which: ev.which};
-      item.text = $(this).val()
+      item.text = $(this).val();
     } else {
       lkp = null;
     }
@@ -440,7 +440,7 @@ $('.item[data-id='+item.id+'] .taglist').append(menu);
 return a;
 }
 var current = $('.item[data-id="'+item.id+'"]');
-if(current.length == 0) current = itemTemplate(item);
+if(current.length === 0) current = itemTemplate(item);
 $('.item-value', current).text( item.value ).removeClass('badge-info badge-warning badge-important').addClass(valueClass(item));
 $('.item-text', current).val( item.text );
 item.urgent ? $('.item-urgent', current).removeClass('btn-inverse').addClass('btn-info') : $('.item-urgent', current).removeClass('btn-info').addClass('btn-inverse');
@@ -453,7 +453,7 @@ item.tags.forEach(function(tag) {
       displayItem(item);
     })
   );
-})
+});
 if(item.complete) {
   $('button', current).not('.item-remove').addClass('disabled').unbind("click");
   $('.tag', current).unbind("click");
@@ -466,9 +466,9 @@ function resequence() {
     column.items.empty();
     $('.column[data-id="'+column.id+'"] .items .item').each(function() {
       column.items.add( todo.items.get($(this).data('id')) );
-    })
+    });
     displayColumn(column);
-  })
+  });
 }
 
 function addSpecificity(button) {
@@ -507,7 +507,7 @@ function addpoints(points) {
   //$('#score').attr('href', 'https://d.taskify.org/c/dash.php?destination='+ escape(window.user));
   hook = localStorage.getItem('hook');
   // add your own hook
-  if (mod == 0) {
+  if (mod === 0) {
     humane.log(today + ' points!');
     if (hook) {
       eval(hook);
@@ -561,7 +561,7 @@ function addpoints(points) {
           console.log(m);
           $("#score").html(' Credits: ' + m['amount']);
           //$('#score').attr('href', 'https://d.taskify.org/c/dash.php?destination='+ escape(window.user));
-        }})
+        }});
       }
     }
   }
@@ -581,7 +581,7 @@ function addpoints(points) {
       }
       return false;
     });
-    $('.sortable').sortable({items:'> .item', handle:'.handle', connectWith:'.sortable', update:function() { resequence() } });
+    $('.sortable').sortable({items:'> .item', handle:'.handle', connectWith:'.sortable', update:function() { resequence(); } });
     $('#simple-menu').sidr();
   }
 
@@ -641,7 +641,7 @@ function displayUser(user) {
   localStorage.setItem('webid', window.user);
 
   if (window.user.indexOf('dns:') == -1 ) {
-    $('#user').text(user['name']).append('<b class="caret"></b>');
+    $('#user').text(user.name).append('<b class="caret"></b>');
     $('#score').attr('href', 'http://'+ document.domain  +'/c/dash?destination=' + escape(user['@id']));
   }
 
@@ -656,7 +656,7 @@ function displayUser(user) {
     load(getParameterByName('workspace'));
   } else if ( document.domain.indexOf('public.taskify.org') !== -1 && !ws) {
     ws = [];
-    ws.push('https://d.taskify.org/public/' + document.domain);
+    ws.push('https://public.databox.me/Public/taskify/' + document.domain);
     localStorage.setItem('workspace', JSON.stringify(ws));
     load(ws[0]);
   }
@@ -696,9 +696,9 @@ function displayUser(user) {
 
     // sort alg simple timestamp for now
     tasks.sort(function(a,b) {
-      if (!a['modified']) return 1;
-      first = new Date(a['modified']);
-      second = new Date(b['modified']);
+      if (!a.modified) return 1;
+      first = new Date(a.modified);
+      second = new Date(b.modified);
       return second - first;
     });
 
@@ -769,7 +769,7 @@ function adduri() {
 
 
 function save(uri) {
-  console.log('saving to ' + uri)
+  console.log('saving to ' + uri);
   humane.log('saving');
 
   // delete old file
