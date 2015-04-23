@@ -67,6 +67,10 @@ template.settings = {
 };
 
 
+if (!template.settings.ldpc) {
+  template.settings.ldpc = 'https://klaranet.com/etc/wallet/tmp/inbox/';
+}
+
 // for tasks
 var defaultLdpc = 'https://klaranet.com/d/taskify/'; // hard code for now until more websockets are there
 
