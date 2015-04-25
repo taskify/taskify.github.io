@@ -621,9 +621,9 @@ function addpoints(points) {
       user = JSON.parse(user);
       displayUser(user);
     } else {
-      var script = document.createElement('script');
-      script.src = 'https://taskify.org/common/user.js.php' + '?callback=getJSONP';
-      document.body.appendChild(script);
+      //var script = document.createElement('script');
+      //script.src = 'https://taskify.org/common/user.js.php' + '?callback=getJSONP';
+      //document.body.appendChild(script);
     }
 
 
