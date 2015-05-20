@@ -536,14 +536,14 @@ function addpoints(points) {
         console.log(t);
 
         $.ajax({
-          url: uri + '2',
+          url: uri,
           contentType: "text/turtle",
-          type: 'PUT',
+          type: 'POST',
           data: t,
           success: function(result) {
           }
         });
-
+/*
         $.ajax({
           url: uri + ',meta',
           contentType: "text/turtle",
@@ -552,6 +552,7 @@ function addpoints(points) {
           success: function(result) {
           }
         });
+*/
       }
 
 
