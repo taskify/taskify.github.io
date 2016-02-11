@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/taskify/taskify.github.io.png?label=ready&title=Ready)](https://waffle.io/taskify/taskify.github.io)
 taskify user interface
 ======================
 
