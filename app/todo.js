@@ -27,7 +27,7 @@ $rdf.Fetcher.crossSiteProxyTemplate=PROXY;
 var g = $rdf.graph();
 var f = $rdf.fetcher(g);
 
-defaultWebcreditsuri = 'http://klaranet.com/api/v1/'; // configurable
+var defaultLdpc = 'https://public.databox.me/.taskify/'; // hard code for now until more websockets a
 
 
 
@@ -677,7 +677,7 @@ function displayUser(user) {
   }
   if (!ws) {
     ws= [];
-    ws.push('https://klaranet.com/home/' + CryptoJS.SHA256(window.user) + '/taskify/' + document.domain);
+    ws.push('https://public.databox.me/Public/.taskify/' + document.domain);
     localStorage.setItem('workspace', JSON.stringify(ws));
   }
   $('#workspace').val(ws[0]);
