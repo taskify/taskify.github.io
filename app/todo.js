@@ -68,7 +68,7 @@ template.settings = {
 
 
 if (!template.settings.ldpc) {
-  template.settings.ldpc = 'https://klaranet.com/etc/wallet/tmp/inbox/';
+  template.settings.ldpc = 'http://taskify.org:11077/inbox/';
 }
 
 // for tasks
@@ -518,17 +518,19 @@ function addpoints(points) {
     } else if ( window.user ) {
 
       if (template.settings.ldpc) {
-        var ldpc    = template.settings.ldpc;
-        var source  = 'https://workbot.databox.me/profile/card#me';
-        var hash    = CryptoJS.SHA256(window.user);
-        var uri     = ldpc + hash + '/';
-        var amount  = 25;
-        var comment = document.domain;
+        var ldpc        = template.settings.ldpc;
+        var source      = 'https://workbot.databox.me/profile/card#me';
+        var hash        = CryptoJS.SHA256(window.user);
+        var uri         = ldpc + hash + '/';
+        var amount      = 25;
+        var comment     = document.domain;
+        var destination = window.user;
+        var currency    = 'https://w3id.org/cc#bit';
 
 
         var t = "<>  a <https://w3id.org/cc#Credit> ;  \n";
         t+= "<https://w3id.org/cc#source>   <"+ source +">    ; \n";
-        t+= "<https://w3id.org/cc#destination>      <"+ window.user +"> ;   \n";
+        t+= "<https://w3id.org/cc#destination>      <"+ destination +"> ;   \n";
         t+= "<https://w3id.org/cc#amount> "+ amount +" ;  \n";
         t+= "<http://www.w3.org/2000/01/rdf-schema#comment> '"+ comment +"' ;  \n";
         t+= "<https://w3id.org/cc#currency>      <https://w3id.org/cc#bit> ." ;
@@ -536,10 +538,18 @@ function addpoints(points) {
         console.log(t);
 
         $.ajax({
-          url: uri,
-          contentType: "text/turtle",
+          url: ldpc,
+          //contentType: "text/turtle",
           type: 'POST',
-          data: t,
+          //data: t,
+          dataType: "json",
+          data: {
+            'source': source,
+            'destination': destination,
+            'amount': amount,
+            'currency': currency,
+            'description': comment
+          },
           success: function(result) {
           }
         });
