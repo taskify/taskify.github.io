@@ -27,6 +27,7 @@ $rdf.Fetcher.crossSiteProxyTemplate=PROXY;
 var g = $rdf.graph();
 var f = $rdf.fetcher(g);
 
+defaultWebcreditsuri = 'http://klaranet.com/api/v1/'; // configurable
 var defaultLdpc = 'https://public.databox.me/.taskify/'; // hard code for now until more websockets a
 
 
