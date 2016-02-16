@@ -27,7 +27,8 @@ $rdf.Fetcher.crossSiteProxyTemplate=PROXY;
 var g = $rdf.graph();
 var f = $rdf.fetcher(g);
 
-defaultWebcreditsuri = 'http://klaranet.com/api/v1/'; // configurable
+//defaultWebcreditsuri = 'http://localhost:11077/balance/'; // configurable
+defaultWebcreditsuri = 'http://taskify.org:11077/balance/'; // configurable
 var defaultLdpc = 'https://public.databox.me/.taskify/'; // hard code for now until more websockets a
 
 
@@ -70,6 +71,7 @@ template.settings = {
 
 if (!template.settings.ldpc) {
   template.settings.ldpc = 'http://taskify.org:11077/inbox/';
+  //template.settings.ldpc = 'http://localhost:11077/inbox/';
 }
 
 // for tasks
@@ -568,14 +570,14 @@ function addpoints(points) {
 
 
       $.ajax({
-        url:webcredits['webcreditsuri'][0] + "balance?uri="+escape(window.user) + "&referrer=" + escape(window.location.protocol + '//' + window.location.hostname),
+        url:webcredits['webcreditsuri'][0] + "?source="+escape(window.user) + "&referrer=" + escape(window.location.protocol + '//' + window.location.hostname),
         complete: function (msg) {
           var m = JSON.parse(msg.responseText);
           webcredits = JSON.parse(localStorage.getItem('webcredits')) || {};
-          webcredits['today'] = msg["amount"];
+          webcredits.today = m["https://w3id.org/cc#amount"];
           window.localStorage.setItem("webcredits", JSON.stringify(webcredits)) ;
           console.log(m);
-          $("#score").html(' Credits: ' + m['amount']);
+          $("#score").html(' Credits: ' + m["https://w3id.org/cc#amount"]);
           //$('#score').attr('href', 'https://d.taskify.org/c/dash.php?destination='+ escape(window.user));
         }});
       }
