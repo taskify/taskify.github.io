@@ -508,8 +508,8 @@ function addpoints(points) {
   today = parseInt(today) + 5.0;
   webcredits['today'] = today;
   localStorage.setItem('webcredits', JSON.stringify(webcredits));
-  mod = today % 25;
-  str = '';  for(i=0; i<25; i+=5) str += mod > i ? '█' : '&nbsp;&nbsp;';
+  mod = today % 30;
+  str = '';  for(i=0; i<30; i+=5) str += mod > i ? '█' : '&nbsp;&nbsp;';
   $('#score').html(' Credits : ' + (today - mod) + '</a> ' + str + '|');
   //$('#score').attr('href', 'https://d.taskify.org/c/dash.php?destination='+ escape(window.user));
   hook = localStorage.getItem('hook');
@@ -525,7 +525,7 @@ function addpoints(points) {
         var source      = 'https://workbot.databox.me/profile/card#me';
         var hash        = CryptoJS.SHA256(window.user);
         var uri         = ldpc + hash + '/';
-        var amount      = 25;
+        var amount      = 30;
         var comment     = document.domain;
         var destination = window.user;
         var currency    = 'https://w3id.org/cc#bit';
