@@ -636,6 +636,9 @@ function addpoints(points) {
             var containerName = 'taskify/';
 
             var url = storage + containerName;
+
+            localStorage.setItem('workspace', JSON.stringify([url]));
+
             Solid.web.get(url).then(
               function(response) {
                 console.log('Raw resource: %s', response.raw())
