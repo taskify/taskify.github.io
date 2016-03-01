@@ -1235,7 +1235,8 @@ function saveSettings() {
 
 function logout() {
   localStorage.removeItem('user');
-  window.location.href = location.protocol + '//' + document.domain + '/start';
+  localStorage.removeItem('webid');
+  window.location.href = location.protocol + '//' + document.domain + '/';
 }
 
 function remove(list) {
