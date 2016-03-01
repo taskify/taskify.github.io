@@ -610,7 +610,79 @@ function addpoints(points) {
     getJSONP(webid);
   });
 
+
+
   $(document).ready(function() {
+
+    $( "#user" ).click(function( event ) {
+      console.log('logging in');
+      var Solid = require('solid');
+      var storage;
+      authEndpoint = 'https://databox.me/';
+      dologin();
+
+      function dologin() {
+        // Get the current user
+        Solid.auth.login(authEndpoint).then(function(webid){
+          // authentication succeeded; do something with the WebID string
+          notie.alert(1, 'Success!  You are logged in as : ' + webid);
+          getJSONP(webid);
+
+          Solid.identity.getProfile(webid).then(function (parsedProfile) {
+            console.log('getProfile result: %o', parsedProfile)
+            console.log('Account storage root: %s', parsedProfile.externalResources.storage) // array of URIs })
+            storage = parsedProfile.externalResources.storage[0];
+            console.log(storage);
+            var containerName = 'taskify/';
+
+            var url = storage + containerName;
+            Solid.web.get(url).then(
+              function(response) {
+                console.log('Raw resource: %s', response.raw())
+              }
+            ).catch(
+              function(err) {
+                console.log(err) // error object
+                // ...
+                var parentDir = 'https://example.org/'
+                var slug = 'taskify'
+                var data = '<#this> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://rdfs.org/sioc/ns#Space> .'
+                var isContainer = true
+
+                Solid.web.post(storage, data, slug, true).then(
+                  function(solidResponse) {
+                    console.log(solidResponse)
+                    // The resulting object has several useful properties.
+                    // See lib/solid-response.js for details
+                    // solidResponse.url - value of the Location header
+                    // solidResponse.acl - url of acl resource
+                    // solidResponse.meta - url of meta resource
+                  }
+                ).catch(function(err){
+                  console.log(err) // error object
+                  console.log(err.status) // contains the error status
+                  console.log(err.xhr) // contains the xhr object
+                })
+
+              }
+            )
+
+
+          });
+
+          window.user = webid;
+        }).catch(function(err) {
+          // authentication failed; display some error message
+          alert(err);
+        });
+      };
+
+
+
+
+
+    });
+
 
     window.localStorage.setItem('version', '0.2');
     document.title = document.domain;
