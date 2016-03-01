@@ -615,6 +615,7 @@ function addpoints(points) {
   $(document).ready(function() {
 
     $( "#user" ).click(function( event ) {
+      if (localStorage.getItem('webid')) return;
       console.log('logging in');
       var Solid = require('solid');
       var storage;
