@@ -637,7 +637,7 @@ function addpoints(points) {
 
             var url = storage + containerName;
 
-            localStorage.setItem('workspace', JSON.stringify([url]));
+            localStorage.setItem('workspace', JSON.stringify([url + document.domain ]));
 
             Solid.web.get(url).then(
               function(response) {
