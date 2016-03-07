@@ -70,8 +70,11 @@ template.settings = {
 
 
 if (!template.settings.ldpc) {
-  template.settings.ldpc = 'http://taskify.org:11077/inbox/';
-  //template.settings.ldpc = 'http://localhost:11077/inbox/';
+  if (localStorage.getItem('inbox')) {
+    template.settings.ldpc = localStorage.getItem('inbox');
+  } else {
+    template.settings.ldpc = 'http://taskify.org:11077/inbox/';
+  }
 }
 
 // for tasks
