@@ -28,7 +28,7 @@ var g = $rdf.graph();
 var f = $rdf.fetcher(g);
 
 //defaultWebcreditsuri = 'http://localhost:11077/balance/'; // configurable
-defaultWebcreditsuri = 'http://taskify.org:11077/'; // configurable
+defaultWebcreditsuri = 'https://taskify.org:11077/'; // configurable
 var defaultLdpc = 'https://public.databox.me/.taskify/'; // hard code for now until more websockets a
 
 
