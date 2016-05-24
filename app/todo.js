@@ -28,7 +28,7 @@ var g = $rdf.graph();
 var f = $rdf.fetcher(g);
 
 //defaultWebcreditsuri = 'http://localhost:11077/balance/'; // configurable
-defaultWebcreditsuri = 'http://taskify.org:11077/balance/'; // configurable
+defaultWebcreditsuri = 'http://taskify.org:11077/'; // configurable
 var defaultLdpc = 'https://public.databox.me/.taskify/'; // hard code for now until more websockets a
 
 
@@ -73,7 +73,7 @@ if (!template.settings.ldpc) {
   if (localStorage.getItem('inbox')) {
     template.settings.ldpc = localStorage.getItem('inbox');
   } else {
-    template.settings.ldpc = 'http://taskify.org:11077/inbox/';
+    template.settings.ldpc = defaultWebcreditsuri + 'addcredits';
   }
 }
 
@@ -539,7 +539,7 @@ var defaultLdpc = 'https://klaranet.com/d/taskify/'; // hard code for now until 
 
         function getBalance() {
           $.ajax({
-            url:webcredits['webcreditsuri'][0] + "?source="+escape(window.user) + "&referrer=" + escape(window.location.protocol + '//' + window.location.hostname),
+            url:webcredits['webcreditsuri'][0] + 'balance' + "?source="+escape(window.user) + "&referrer=" + escape(window.location.protocol + '//' + window.location.hostname),
             complete: function (msg) {
               var m = JSON.parse(msg.responseText);
               webcredits = JSON.parse(localStorage.getItem('webcredits')) || {};
