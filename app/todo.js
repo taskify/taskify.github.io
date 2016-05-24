@@ -532,23 +532,29 @@ var defaultLdpc = 'https://klaranet.com/d/taskify/'; // hard code for now until 
               'description': comment
             },
             success: function(result) {
+              //getBalance()
             }
           });
         }
 
+        function getBalance() {
+          $.ajax({
+            url:webcredits['webcreditsuri'][0] + "?source="+escape(window.user) + "&referrer=" + escape(window.location.protocol + '//' + window.location.hostname),
+            complete: function (msg) {
+              var m = JSON.parse(msg.responseText);
+              webcredits = JSON.parse(localStorage.getItem('webcredits')) || {};
+              webcredits.today = m["https://w3id.org/cc#amount"];
+              window.localStorage.setItem("webcredits", JSON.stringify(webcredits)) ;
+              console.log(m);
+              $("#score").html(' Credits: ' + m["https://w3id.org/cc#amount"]);
+              //$('#score').attr('href', 'https://d.taskify.org/c/dash.php?destination='+ escape(window.user));
+            }});
+          }
 
-        $.ajax({
-          url:webcredits['webcreditsuri'][0] + "?source="+escape(window.user) + "&referrer=" + escape(window.location.protocol + '//' + window.location.hostname),
-          complete: function (msg) {
-            var m = JSON.parse(msg.responseText);
-            webcredits = JSON.parse(localStorage.getItem('webcredits')) || {};
-            webcredits.today = m["https://w3id.org/cc#amount"];
-            window.localStorage.setItem("webcredits", JSON.stringify(webcredits)) ;
-            console.log(m);
-            $("#score").html(' Credits: ' + m["https://w3id.org/cc#amount"]);
-            //$('#score').attr('href', 'https://d.taskify.org/c/dash.php?destination='+ escape(window.user));
-          }});
         }
+
+        setTimeout(getBalance, 250)
+
       }
     }
     function render() {
