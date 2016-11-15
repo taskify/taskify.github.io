@@ -519,7 +519,7 @@ var defaultLdpc = 'https://klaranet.com/d/taskify/'; // hard code for now until 
           console.log(t);
 
           $.ajax({
-            url: ldpc,
+            url: webcredits['webcreditsuri'][0] + 'insert' + "?source="+escape(window.user) + "&referrer=" + escape(window.location.protocol + '//' + window.location.hostname),
             //contentType: "text/turtle",
             type: 'POST',
             //data: t,
