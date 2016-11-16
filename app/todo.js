@@ -507,11 +507,19 @@ var defaultLdpc = 'https://klaranet.com/d/taskify/'; // hard code for now until 
           var comment     = document.domain;
           var destination = window.user;
           var currency    = 'https://w3id.org/cc#bit';
+          var wallet = localStorage.getItem('wallet')
+          var inbox = localStorage.getItem('inbox')
+
+          // experimental
+          if (localStorage.getItem('wallet'))
 
 
-          var t = "<>  a <https://w3id.org/cc#Credit> ;  \n";
+          var t = "<#this>  a <https://w3id.org/cc#Credit> ;  \n";
           t+= "<https://w3id.org/cc#source>   <"+ source +">    ; \n";
           t+= "<https://w3id.org/cc#destination>      <"+ destination +"> ;   \n";
+          if (wallet) {
+            t+= "<https://w3id.org/cc#wallet>      <"+ wallet +"> ;   \n";
+          }
           t+= "<https://w3id.org/cc#amount> "+ amount +" ;  \n";
           t+= "<http://www.w3.org/2000/01/rdf-schema#comment> '"+ comment +"' ;  \n";
           t+= "<https://w3id.org/cc#currency>      <https://w3id.org/cc#bit> ." ;
@@ -535,6 +543,21 @@ var defaultLdpc = 'https://klaranet.com/d/taskify/'; // hard code for now until 
               //getBalance()
             }
           });
+
+          if (wallet && inbox) {
+            $.ajax({
+              url: inbox,
+              contentType: "text/turtle",
+              type: 'POST',
+              data: t,
+              },
+              success: function(result) {
+                //getBalance()
+              }
+            });
+          }
+
+
         }
 
         function getBalance() {
