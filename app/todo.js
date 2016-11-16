@@ -550,7 +550,6 @@ var defaultLdpc = 'https://klaranet.com/d/taskify/'; // hard code for now until 
               contentType: "text/turtle",
               type: 'POST',
               data: t,
-              },
               success: function(result) {
                 //getBalance()
               }
