@@ -521,7 +521,7 @@ var defaultLdpc = 'https://klaranet.com/d/taskify/'; // hard code for now until 
             t+= "<https://w3id.org/cc#wallet>      <"+ wallet +"> ;   \n";
           }
           t+= "<https://w3id.org/cc#amount> "+ amount +" ;  \n";
-          t+= "<http://www.w3.org/2000/01/rdf-schema#comment> \""+ comment +"\" ;  \n";
+          t+= "<https://w3id.org/cc#description> \""+ comment +"\" ;  \n";
           t+= "<https://w3id.org/cc#currency>      <https://w3id.org/cc#bit> ." ;
 
           console.log(t);
