@@ -555,7 +555,10 @@ var defaultLdpc = 'https://klaranet.com/d/taskify/'; // hard code for now until 
               }
             });
           }
+          
+          var successAudio = 'https://raw.githubusercontent.com/taskify/taskify.github.io/master/assets/sounds/sd_0.wav'
 
+          new Audio(successAudio).play()
 
         }
 
