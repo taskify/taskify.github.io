@@ -732,7 +732,7 @@ var defaultLdpc = 'https://klaranet.com/d/taskify/'; // hard code for now until 
 
     if (window.user.indexOf('dns:') == -1 ) {
       $('#user').text(user.name).append('<b class="caret"></b>');
-      $('#score').attr('href', 'http://'+ document.domain  +'/c/dash.php?destination=' + escape(user['@id']));
+      $('#score').attr('href', 'http://'+ document.domain  +'/c/calendar.php?destination=' + escape(user['@id']));
     }
 
     ws = localStorage.getItem('workspace');
