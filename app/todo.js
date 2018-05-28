@@ -43,6 +43,7 @@ var title       = getParam('title');
 var webid       = getParam('webid');
 var wss         = getParam('wss');
 
+var shortcuts   = true
 
 var template = {};
 
@@ -362,14 +363,23 @@ var defaultLdpc = 'https://klaranet.com/d/taskify/'; // hard code for now until 
         ).append(
           $('<textarea class="item-text">')
           .click(function(ev) {
+            ir (!shortcuts) {
+              return
+            }
             addpoints();
           })
           .keyup(function(ev) {
+            ir (!shortcuts) {
+              return
+            }
             if (lkp && lkp.target && lkp.which != ev.which && ev.which == 8) {
               addpoints();
             }
           })
           .keyup(function(ev) {
+            ir (!shortcuts) {
+              return
+            }
             if (lkp && lkp.target && lkp.which != ev.which && ev.which == 13) {
               addpoints();
             }
@@ -555,7 +565,7 @@ var defaultLdpc = 'https://klaranet.com/d/taskify/'; // hard code for now until 
               }
             });
           }
-          
+
           var successAudio = 'https://raw.githubusercontent.com/taskify/taskify.github.io/master/assets/sounds/sd_0.wav'
 
           new Audio(successAudio).play()
