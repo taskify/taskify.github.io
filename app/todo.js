@@ -363,13 +363,13 @@ var defaultLdpc = 'https://klaranet.com/d/taskify/'; // hard code for now until 
         ).append(
           $('<textarea class="item-text">')
           .click(function(ev) {
-            ir (!shortcuts) {
+            if (!shortcuts) {
               return
             }
             addpoints();
           })
           .keyup(function(ev) {
-            ir (!shortcuts) {
+            if (!shortcuts) {
               return
             }
             if (lkp && lkp.target && lkp.which != ev.which && ev.which == 8) {
@@ -377,7 +377,7 @@ var defaultLdpc = 'https://klaranet.com/d/taskify/'; // hard code for now until 
             }
           })
           .keyup(function(ev) {
-            ir (!shortcuts) {
+            if (!shortcuts) {
               return
             }
             if (lkp && lkp.target && lkp.which != ev.which && ev.which == 13) {
@@ -657,7 +657,7 @@ var defaultLdpc = 'https://klaranet.com/d/taskify/'; // hard code for now until 
                 function(err) {
                   console.log(err) // error object
                   // ...
-                  var parentDir = 'https://example.org/'
+                  var parentDif = 'https://example.org/'
                   var slug = 'taskify'
                   var data = '<#this> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://rdfs.org/sioc/ns#Space> .'
                   var isContainer = true
