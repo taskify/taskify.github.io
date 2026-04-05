@@ -609,9 +609,11 @@ if (LIVE) connectWS()
 
 // ---- xlogin + auth fetch ----
 var _nativeFetch = window.fetch.bind(window)
+var _inAuthFetch = false
 window.fetch = function(url, opts) {
-  if (window.xlogin && window.xlogin.authFetch && opts && (opts.method === 'PUT' || opts.method === 'POST' || opts.method === 'DELETE' || opts.method === 'PATCH')) {
-    return window.xlogin.authFetch(url, opts)
+  if (!_inAuthFetch && window.xlogin && window.xlogin.authFetch && opts && (opts.method === 'PUT' || opts.method === 'POST' || opts.method === 'DELETE' || opts.method === 'PATCH')) {
+    _inAuthFetch = true
+    return window.xlogin.authFetch(url, opts).finally(function() { _inAuthFetch = false })
   }
   return _nativeFetch(url, opts)
 }
