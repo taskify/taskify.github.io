@@ -537,7 +537,19 @@ function showChangeToast(url) {
 }
 
 if (LIVE) connectWS()
+
+// ---- xlogin ----
+document.addEventListener('xlogin', function(e) {
+  console.log('[taskify] logged in:', e.detail.type, e.detail.id)
+  window.__user = { type: e.detail.type, id: e.detail.id }
+})
+document.addEventListener('xlogout', function() {
+  console.log('[taskify] logged out')
+  window.__user = null
+})
 </script>
+
+<script src="https://unpkg.com/xlogin"></script>
 
 </body>
 </html>
