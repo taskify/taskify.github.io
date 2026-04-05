@@ -7,8 +7,12 @@ export default {
   render(subject, lionStore, container, context) {
     var data = window.__paperclip
     var nav = window.__nav
-    var projects = data.projects || []
     var issues = data.issues || []
+    var projects = (data.projects || []).slice().sort(function(a, b) {
+      var aCount = issues.filter(function(i) { return i.projectId === a.id }).length
+      var bCount = issues.filter(function(i) { return i.projectId === b.id }).length
+      return bCount - aCount
+    })
     var agents = data.agents || []
     var goals = data.goals || []
 
