@@ -260,13 +260,26 @@
 
 <script type="module">
 // --- Data layer: try /db/ (MongoDB via JSS), fall back to demo data ---
+function resolveDB(input) {
+  if (!input) return '/db/taskify'
+  // Fix corrupted values like /db/https://...
+  if (input.startsWith('/db/http')) return input.replace(/^\/db\//, '')
+  if (input.startsWith('http://') || input.startsWith('https://')) return input
+  if (input.startsWith('/db/')) return input
+  return '/db/' + input
+}
+function dbDisplayName(db) {
+  try { var u = new URL(db); return u.hostname + u.pathname } catch(e) {}
+  return db.replace(/^\/db\//, '')
+}
 var _urlCompany = new URLSearchParams(window.location.search).get('company')
-var DB = _urlCompany ? '/db/' + _urlCompany : (localStorage.getItem('taskify-db') || '/db/taskify')
-if (_urlCompany) localStorage.setItem('taskify-db', DB)
+var DB = resolveDB(_urlCompany || localStorage.getItem('taskify-db') || 'taskify')
+localStorage.setItem('taskify-db', DB)
 var LIVE = false
 
 async function fetchCollection(name) {
-  var listing = await fetch(DB + '/' + name + '/').then(function(r) { return r.json() })
+  var base = DB.endsWith('/') ? DB : DB + '/'
+  var listing = await fetch(base + name + '/').then(function(r) { return r.json() })
   var items = listing.contains || listing['ldp:contains'] || []
   var urls = items.map(function(item) {
     return typeof item === 'string' ? item : item['@id']
@@ -416,10 +429,10 @@ function updateSidebar(activePane) {
 // Expose navigate globally so panes can use it
 window.__nav = navigate
 window.__loadData = loadData
-window.__setDB = function(path) {
-  DB = path
-  localStorage.setItem('taskify-db', path)
-  addCompanyToList(path.replace(/^\/db\//, ''))
+window.__setDB = function(input) {
+  DB = resolveDB(input)
+  localStorage.setItem('taskify-db', DB)
+  addCompanyToList(DB)
   if (LIVE) connectWS()
 }
 window.__getDB = function() { return DB }
@@ -429,34 +442,35 @@ window.__isLive = function() { return LIVE }
 function getCompanyList() {
   try { return JSON.parse(localStorage.getItem('taskify-companies')) || [] } catch(e) { return [] }
 }
-function addCompanyToList(name) {
+function addCompanyToList(db) {
+  var resolved = resolveDB(db)
   var list = getCompanyList()
-  if (list.indexOf(name) === -1) { list.push(name); localStorage.setItem('taskify-companies', JSON.stringify(list)) }
+  if (list.indexOf(resolved) === -1) { list.push(resolved); localStorage.setItem('taskify-companies', JSON.stringify(list)) }
   renderCompanySelect()
 }
 function renderCompanySelect() {
   var sel = document.getElementById('company-select')
   var list = getCompanyList()
-  var current = DB.replace(/^\/db\//, '')
   sel.innerHTML = list.map(function(c) {
-    return '<option value="' + c + '"' + (c === current ? ' selected' : '') + '>' + c + '</option>'
+    return '<option value="' + c + '"' + (c === DB ? ' selected' : '') + '>' + dbDisplayName(c) + '</option>'
   }).join('') + '<option value="__new">+ New company...</option>'
 }
 // Add current company to list
-addCompanyToList(DB.replace(/^\/db\//, ''))
+addCompanyToList(DB)
 
 document.getElementById('company-select').addEventListener('change', async function() {
   var val = this.value
   if (val === '__new') {
-    var name = prompt('Company name (database):')
-    if (!name) { renderCompanySelect(); return }
-    val = name.trim()
+    var input = prompt('Company name or full URL (e.g. mycompany or https://server.com/db/mycompany):')
+    if (!input) { renderCompanySelect(); return }
+    val = resolveDB(input.trim())
     addCompanyToList(val)
   }
-  window.__setDB('/db/' + val)
+  window.__setDB(val)
   try { await window.__loadData() } catch(e) {
+    var name = dbDisplayName(val)
     window.__paperclip = {
-      company: { id: 'c1', name: val, status: 'active', issuePrefix: val.slice(0, 3).toUpperCase() },
+      company: { id: 'c1', name: name, status: 'active', issuePrefix: name.slice(0, 3).toUpperCase() },
       agents: [], issues: [], projects: [], goals: [], activity: []
     }
   }
@@ -487,8 +501,17 @@ else { navigate('dashboard', 'Dashboard') }
 var _ws = null
 function connectWS() {
   if (_ws) { _ws.onclose = null; _ws.close() }
-  _ws = new WebSocket((location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + location.host + '/.notifications')
-  _ws.onopen = function() { _ws.send('sub ' + location.origin + DB + '/') }
+  var wsHost, subPrefix
+  try {
+    var dbUrl = new URL(DB)
+    wsHost = (dbUrl.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + dbUrl.host
+    subPrefix = dbUrl.origin + dbUrl.pathname
+  } catch(e) {
+    wsHost = (location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + location.host
+    subPrefix = location.origin + DB
+  }
+  _ws = new WebSocket(wsHost + '/.notifications')
+  _ws.onopen = function() { _ws.send('sub ' + subPrefix + '/') }
   _ws.onmessage = async function(e) {
     if (e.data.startsWith('pub ')) {
       var pubUrl = e.data.slice(4)

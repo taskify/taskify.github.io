@@ -37,12 +37,9 @@ export default {
       '<div class="card mb">' +
         '<div style="display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end">' +
           '<div class="form-group" style="margin:0">' +
-            '<label class="form-label">Database Name</label>' +
-            '<div class="row" style="gap:8px">' +
-              '<span class="text-muted text-sm" style="white-space:nowrap">/db/</span>' +
-              '<input class="form-input" id="f-db" value="' + dbName + '" placeholder="e.g. my-company" style="font-family:monospace">' +
-            '</div>' +
-            '<div class="text-xs text-muted" style="margin-top:4px">Each database is a separate company. Switch to load different data.</div>' +
+            '<label class="form-label">Database URL</label>' +
+              '<input class="form-input" id="f-db" value="' + currentDB + '" placeholder="e.g. my-company or https://server.com/db/my-company" style="font-family:monospace">' +
+            '<div class="text-xs text-muted" style="margin-top:4px">Short name for local, or full URL for remote server.</div>' +
           '</div>' +
           '<button class="btn-primary" id="switch-db-btn">Switch</button>' +
         '</div>' +
@@ -107,7 +104,7 @@ export default {
       btn.textContent = 'Switching...'
       btn.disabled = true
 
-      window.__setDB('/db/' + name)
+      window.__setDB(name)
       try {
         await window.__loadData()
       } catch (e) {
