@@ -607,7 +607,15 @@ function showChangeToast(url) {
 
 if (LIVE) connectWS()
 
-// ---- xlogin ----
+// ---- xlogin + auth fetch ----
+var _nativeFetch = window.fetch.bind(window)
+window.fetch = function(url, opts) {
+  if (window.xlogin && window.xlogin.authFetch && opts && (opts.method === 'PUT' || opts.method === 'POST' || opts.method === 'DELETE' || opts.method === 'PATCH')) {
+    return window.xlogin.authFetch(url, opts)
+  }
+  return _nativeFetch(url, opts)
+}
+
 document.addEventListener('xlogin', function(e) {
   console.log('[taskify] logged in:', e.detail.type, e.detail.id)
   window.__user = { type: e.detail.type, id: e.detail.id }
