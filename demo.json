@@ -1,0 +1,39 @@
+{
+  "company": {
+    "id": "c1",
+    "name": "Nostr Media",
+    "status": "active",
+    "issuePrefix": "NOS"
+  },
+  "agents": [
+    { "id": "a1", "name": "CEO", "role": "ceo", "icon": null, "status": "idle", "adapterType": "claude_local", "reportsTo": null, "lastHeartbeatAt": "2026-04-04T14:07:46.605Z", "runtimeConfig": { "heartbeat": { "enabled": true, "intervalSec": 3600, "cooldownSec": 10, "wakeOnDemand": true, "maxConcurrentRuns": 1 } }, "permissions": { "canCreateAgents": true }, "budgetMonthlyCents": 0, "spentMonthlyCents": 0 },
+    { "id": "a2", "name": "CTO", "role": "cto", "icon": null, "status": "running", "adapterType": "claude_local", "reportsTo": "a1", "lastHeartbeatAt": "2026-04-04T15:12:00.000Z", "runtimeConfig": { "heartbeat": { "enabled": true, "intervalSec": 1800, "cooldownSec": 10, "wakeOnDemand": true, "maxConcurrentRuns": 2 } }, "permissions": { "canCreateAgents": true }, "budgetMonthlyCents": 5000, "spentMonthlyCents": 1200 },
+    { "id": "a3", "name": "Engineer", "role": "engineer", "icon": null, "status": "running", "adapterType": "codex_local", "reportsTo": "a2", "lastHeartbeatAt": "2026-04-04T15:14:30.000Z", "runtimeConfig": { "heartbeat": { "enabled": true, "intervalSec": 900, "cooldownSec": 5, "wakeOnDemand": true, "maxConcurrentRuns": 3 } }, "permissions": {}, "budgetMonthlyCents": 3000, "spentMonthlyCents": 800 },
+    { "id": "a4", "name": "Designer", "role": "designer", "icon": null, "status": "paused", "adapterType": "cursor_local", "reportsTo": "a2", "lastHeartbeatAt": "2026-04-04T12:00:00.000Z", "runtimeConfig": { "heartbeat": { "enabled": false, "intervalSec": 3600 } }, "permissions": {}, "budgetMonthlyCents": 2000, "spentMonthlyCents": 0, "pauseReason": "Waiting for brand guidelines" },
+    { "id": "a5", "name": "Marketer", "role": "marketing", "icon": null, "status": "idle", "adapterType": "claude_local", "reportsTo": "a1", "lastHeartbeatAt": "2026-04-04T13:30:00.000Z", "runtimeConfig": { "heartbeat": { "enabled": true, "intervalSec": 7200 } }, "permissions": {}, "budgetMonthlyCents": 1500, "spentMonthlyCents": 200 }
+  ],
+  "issues": [
+    { "id": "i1", "identifier": "NOS-1", "title": "Hire founding engineer and create hiring plan", "description": "Hire a founding engineer, write a hiring plan, delegate work.", "status": "in_progress", "priority": "high", "projectId": "p1", "goalId": "g1", "assigneeAgentId": "a1", "updatedAt": "2026-04-04T14:07:45.965Z", "createdAt": "2026-04-04T14:05:58.437Z" },
+    { "id": "i2", "identifier": "NOS-2", "title": "Set up CI/CD pipeline for relay infrastructure", "description": "GitHub Actions with testing, Docker builds, deployment.", "status": "in_progress", "priority": "high", "projectId": "p2", "goalId": "g1", "assigneeAgentId": "a3", "updatedAt": "2026-04-04T15:10:00.000Z", "createdAt": "2026-04-04T14:30:00.000Z" },
+    { "id": "i3", "identifier": "NOS-3", "title": "Design brand identity and landing page mockups", "description": "Logo, color palette, typography, landing page.", "status": "todo", "priority": "medium", "projectId": "p3", "goalId": "g1", "assigneeAgentId": "a4", "updatedAt": "2026-04-04T14:45:00.000Z", "createdAt": "2026-04-04T14:40:00.000Z" },
+    { "id": "i4", "identifier": "NOS-4", "title": "Write technical architecture doc for relay cluster", "description": "WebSocket handling, event storage, scaling strategy.", "status": "in_progress", "priority": "high", "projectId": "p2", "goalId": "g1", "assigneeAgentId": "a2", "updatedAt": "2026-04-04T15:05:00.000Z", "createdAt": "2026-04-04T14:50:00.000Z" },
+    { "id": "i5", "identifier": "NOS-5", "title": "Research competitor landscape and positioning", "description": "Analyze Nostr clients and media platforms.", "status": "done", "priority": "medium", "projectId": "p3", "goalId": "g1", "assigneeAgentId": "a5", "updatedAt": "2026-04-04T13:30:00.000Z", "createdAt": "2026-04-04T12:00:00.000Z" },
+    { "id": "i6", "identifier": "NOS-6", "title": "Implement Nostr relay with NIP-01 support", "description": "Basic relay with event storage and retrieval.", "status": "todo", "priority": "high", "projectId": "p2", "goalId": "g1", "assigneeAgentId": "a3", "updatedAt": "2026-04-04T15:00:00.000Z", "createdAt": "2026-04-04T14:55:00.000Z" },
+    { "id": "i7", "identifier": "NOS-7", "title": "Draft content strategy for launch", "description": "Blog posts, social media, community outreach.", "status": "todo", "priority": "low", "projectId": "p3", "goalId": "g1", "assigneeAgentId": "a5", "updatedAt": "2026-04-04T14:20:00.000Z", "createdAt": "2026-04-04T14:20:00.000Z" }
+  ],
+  "projects": [
+    { "id": "p1", "name": "Onboarding", "description": "Initial company setup and hiring", "status": "in_progress", "color": "#6366f1", "leadAgentId": "a1", "goalId": "g1", "goalIds": ["g1"], "goals": [{ "id": "g1", "title": "Media Company For Nostr" }], "workspaces": [] },
+    { "id": "p2", "name": "Relay Infrastructure", "description": "Build and deploy Nostr relay cluster", "status": "in_progress", "color": "#22c55e", "leadAgentId": "a2", "goalId": "g1", "goalIds": ["g1"], "goals": [{ "id": "g1", "title": "Media Company For Nostr" }], "workspaces": [{ "id": "w1" }] },
+    { "id": "p3", "name": "Brand & Marketing", "description": "Brand identity, website, and go-to-market", "status": "in_progress", "color": "#eab308", "leadAgentId": "a5", "goalId": "g1", "goalIds": ["g1"], "goals": [{ "id": "g1", "title": "Media Company For Nostr" }], "workspaces": [] }
+  ],
+  "goals": [
+    { "id": "g1", "title": "Media Company For Nostr", "description": "Build the leading media platform on Nostr protocol", "level": "company", "status": "active", "parentId": null, "ownerAgentId": "a1", "createdAt": "2026-04-04T14:04:35.340Z", "updatedAt": "2026-04-04T14:04:35.340Z" }
+  ],
+  "activity": [
+    { "id": "ev1", "actorType": "user", "actorId": "local-board", "action": "heartbeat.cancelled", "entityType": "heartbeat_run", "agentId": "a1", "createdAt": "2026-04-04T15:14:45.000Z" },
+    { "id": "ev2", "actorType": "agent", "actorId": "a3", "action": "issue.checked_out", "entityType": "issue", "agentId": "a3", "createdAt": "2026-04-04T15:10:00.000Z" },
+    { "id": "ev3", "actorType": "agent", "actorId": "a2", "action": "issue.checked_out", "entityType": "issue", "agentId": "a2", "createdAt": "2026-04-04T15:05:00.000Z" },
+    { "id": "ev4", "actorType": "agent", "actorId": "a5", "action": "issue.completed", "entityType": "issue", "agentId": "a5", "createdAt": "2026-04-04T13:30:00.000Z" },
+    { "id": "ev5", "actorType": "agent", "actorId": "a1", "action": "agent.created", "entityType": "agent", "agentId": "a3", "createdAt": "2026-04-04T14:30:00.000Z" }
+  ]
+}

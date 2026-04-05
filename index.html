@@ -1,149 +1,519 @@
-
 <!DOCTYPE html>
-<!--
-// * Copyright 2012-2015 Melvin Carvalho and other contributors; Licensed LGPGv3
--->
-<html>
+<html lang="en">
 <head>
-  <title>Taskify</title>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="css/bootstrap.css" rel="stylesheet">
-  <link href="css/bootstrap-responsive.css" rel="stylesheet">
-  <link href="//code.jquery.com/ui/1.9.0/themes/base/jquery-ui.css" rel="stylesheet">
-  <link href="css/jquery.sidr.dark.css" rel="stylesheet">
-  <link href="css/libnotify.css" rel="stylesheet">
-  <link href="css/todo.css" rel="stylesheet">
-  <!--[if lt IE 9]>
-	<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js" type="text/javascript"></script>
-    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Taskify</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #ffffff; --bg2: #fafafa; --bg3: #f4f4f5;
+      --fg: #09090b; --fg2: #3f3f46; --fg3: #a1a1aa;
+      --accent: #6366f1; --accent2: #4f46e5; --accent-soft: #eef2ff;
+      --green: #16a34a; --green-soft: #f0fdf4;
+      --yellow: #ca8a04; --yellow-soft: #fefce8;
+      --red: #dc2626; --red-soft: #fef2f2;
+      --blue: #2563eb; --blue-soft: #eff6ff;
+      --border: #e4e4e7; --border2: #d4d4d8;
+      --radius: 10px; --radius-lg: 14px;
+      --sidebar-w: 240px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+      --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+           background: var(--bg); color: var(--fg); line-height: 1.5;
+           -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    a { color: var(--accent2); text-decoration: none; }
+    a:hover { text-decoration: underline; }
 
+    /* layout */
+    #app { display: flex; min-height: 100vh; }
+    #sidebar { width: var(--sidebar-w); background: var(--bg); border-right: 1px solid var(--border);
+               padding: 0; flex-shrink: 0; position: fixed; top: 0; left: 0; bottom: 0;
+               overflow-y: auto; display: flex; flex-direction: column; }
+    #main { margin-left: var(--sidebar-w); flex: 1; min-width: 0; background: var(--bg);
+            min-height: 100vh; }
+    #topbar { display: flex; align-items: center; border-bottom: 1px solid var(--border);
+              background: var(--bg); position: sticky; top: 0; z-index: 10; }
+    #breadcrumbs { padding: 12px 32px; font-size: 13px; color: var(--fg3);
+                   display: flex; align-items: center; gap: 8px; flex: 1; }
+    #breadcrumbs span { cursor: pointer; color: var(--fg3); transition: color 0.15s; }
+    #breadcrumbs span:hover { color: var(--accent2); }
+    #breadcrumbs .bc-current { color: var(--fg); cursor: default; font-weight: 500; }
+    #breadcrumbs .bc-current:hover { color: var(--fg); }
+    #breadcrumbs .bc-sep { color: var(--border2); cursor: default; font-size: 11px; }
+    #content { padding: 32px; max-width: 1000px; }
+
+    /* sidebar */
+    .sb-logo { padding: 20px 24px; font-weight: 700; font-size: 16px; letter-spacing: -0.02em;
+               border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+    .sb-logo-icon { width: 28px; height: 28px; background: var(--accent); border-radius: 8px;
+                    display: flex; align-items: center; justify-content: center;
+                    font-size: 14px; box-shadow: var(--shadow-sm); }
+    .sb-nav { padding: 12px 12px; flex: 1; }
+    .sb-section { padding: 16px 12px 6px; font-size: 10px; text-transform: uppercase;
+                  letter-spacing: 0.1em; color: var(--fg3); font-weight: 600; }
+    .sb-section:first-child { padding-top: 4px; }
+    .sb-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; font-size: 13px;
+               color: var(--fg2); cursor: pointer; border-radius: 8px; transition: all 0.15s;
+               font-weight: 450; margin-bottom: 2px; }
+    .sb-item:hover { background: var(--bg3); color: var(--fg); }
+    .sb-item.active { background: var(--accent-soft); color: var(--accent2); font-weight: 600; }
+    .sb-item-icon { width: 20px; text-align: center; font-size: 14px; }
+    .sb-count { margin-left: auto; font-size: 11px; font-weight: 500; color: var(--fg3);
+                background: var(--bg3); padding: 1px 8px; border-radius: 9999px; }
+    .sb-item.active .sb-count { background: var(--accent)18; color: var(--accent2); }
+    .sb-footer { padding: 16px 24px; border-top: 1px solid var(--border); font-size: 11px;
+                 color: var(--fg3); }
+
+    /* shared components */
+    .card { background: var(--bg); border: 1px solid var(--border); box-shadow: var(--shadow-sm);
+            border-radius: var(--radius); padding: 18px; transition: box-shadow 0.2s, border-color 0.2s; }
+    .card:hover { box-shadow: var(--shadow); border-color: var(--border2); }
+    .card.clickable:hover { box-shadow: var(--shadow-md); border-color: var(--accent); }
+    .grid { display: grid; gap: 16px; }
+    .grid-2 { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+    .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px;
+             border-radius: 9999px; font-size: 11px; font-weight: 600; letter-spacing: 0.01em; }
+    .badge-green { background: var(--green-soft); color: var(--green); }
+    .badge-yellow { background: var(--yellow-soft); color: var(--yellow); }
+    .badge-red { background: var(--red-soft); color: var(--red); }
+    .badge-blue { background: var(--blue-soft); color: var(--blue); }
+    .badge-gray { background: var(--bg3); color: var(--fg3); }
+    .badge-purple { background: var(--accent-soft); color: var(--accent2); }
+    .badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%;
+                     background: currentColor; flex-shrink: 0; }
+    .badge-no-dot::before { display: none; }
+    .metric { text-align: center; padding: 24px 16px; }
+    .metric-value { font-size: 28px; font-weight: 700; color: var(--fg); letter-spacing: -0.02em; }
+    .metric-label { font-size: 11px; color: var(--fg3); margin-top: 6px; text-transform: uppercase;
+                    letter-spacing: 0.06em; font-weight: 500; }
+    h1 { font-size: 24px; font-weight: 700; margin-bottom: 20px; letter-spacing: -0.025em;
+         color: var(--fg); }
+    h2 { font-size: 14px; font-weight: 600; margin-bottom: 10px; color: var(--fg3);
+         text-transform: uppercase; letter-spacing: 0.04em; }
+    .row { display: flex; align-items: center; gap: 8px; }
+    .row-between { display: flex; align-items: center; justify-content: space-between; }
+    .mb { margin-bottom: 28px; }
+    .text-sm { font-size: 13px; }
+    .text-xs { font-size: 11px; }
+    .text-muted { color: var(--fg3); }
+    .text-fg2 { color: var(--fg2); }
+    table { width: 100%; border-collapse: separate; border-spacing: 0; }
+    th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+         color: var(--fg3); padding: 10px 14px; border-bottom: 1px solid var(--border);
+         font-weight: 600; background: var(--bg2); }
+    tr:first-child th:first-child { border-radius: 8px 0 0 0; }
+    tr:first-child th:last-child { border-radius: 0 8px 0 0; }
+    td { padding: 11px 14px; border-bottom: 1px solid var(--border); font-size: 13px;
+         transition: background 0.1s; }
+    tr:last-child td { border-bottom: none; }
+    tr.clickable:hover td { background: var(--accent-soft); }
+    tr:not(.clickable):hover td { background: var(--bg2); }
+    .icon-circle { width: 34px; height: 34px; border-radius: 10px; display: flex;
+                   align-items: center; justify-content: center; font-size: 14px;
+                   background: var(--bg3); font-weight: 600; color: var(--fg2); }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .status-idle { background: var(--fg3); }
+    .status-running { background: var(--green); }
+    .status-error { background: var(--red); }
+    .status-paused { background: var(--yellow); }
+    .status-active { background: var(--green); }
+    .status-in_progress { background: var(--blue); }
+    .status-done, .status-completed { background: var(--green); }
+    .empty { text-align: center; padding: 48px; color: var(--fg3); font-size: 14px; }
+    .loading { text-align: center; padding: 48px; color: var(--fg3); }
+    .priority-high { color: var(--red); }
+    .priority-medium { color: var(--yellow); }
+    .priority-low { color: var(--fg3); }
+    .clickable { cursor: pointer; }
+
+    /* toast */
+    #toasts { position: fixed; bottom: 20px; right: 20px; z-index: 300;
+              display: flex; flex-direction: column-reverse; gap: 8px; pointer-events: none; }
+    .toast { background: var(--fg); color: var(--bg); padding: 12px 20px; border-radius: 10px;
+             font-size: 13px; box-shadow: var(--shadow-md); pointer-events: auto;
+             animation: toast-in 0.3s ease; max-width: 360px; }
+    .toast-icon { margin-right: 8px; }
+    @keyframes toast-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* mobile */
+    #hamburger { display: none; background: none; border: none; font-size: 22px; cursor: pointer;
+                 padding: 8px 16px; color: var(--fg); line-height: 1; }
+    #sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3);
+                       z-index: 99; }
+    @media (max-width: 768px) {
+      #sidebar { display: none; z-index: 100; box-shadow: var(--shadow-md); }
+      #sidebar.open { display: flex; }
+      #sidebar-overlay.open { display: block; }
+      #main { margin-left: 0; }
+      #content { padding: 16px; }
+      #breadcrumbs { padding: 10px 16px; }
+      #hamburger { display: block; }
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .grid-3 { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* progress bars */
+    .progress-track { height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 3px; transition: width 0.3s ease; }
+
+    /* buttons */
+    .btn { padding: 7px 16px; border-radius: 8px; border: 1px solid var(--border); font-size: 12px;
+           cursor: pointer; font-weight: 500; transition: all 0.15s; font-family: inherit; }
+    .btn:hover { border-color: var(--border2); box-shadow: var(--shadow-sm); }
+    .btn-active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .btn-active:hover { background: var(--accent2); border-color: var(--accent2); }
+    .btn-default { background: var(--bg); color: var(--fg2); }
+
+    /* modals */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 200;
+                     display: flex; align-items: center; justify-content: center; }
+    .modal { background: var(--bg); border-radius: var(--radius-lg); box-shadow: var(--shadow-md);
+             width: 90%; max-width: 520px; max-height: 90vh; overflow-y: auto; }
+    .modal-header { padding: 20px 24px 0; display: flex; align-items: center; justify-content: space-between; }
+    .modal-header h2 { margin: 0; text-transform: none; letter-spacing: normal; color: var(--fg);
+                       font-size: 18px; }
+    .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--fg3);
+                   padding: 4px 8px; border-radius: 6px; }
+    .modal-close:hover { background: var(--bg3); color: var(--fg); }
+    .modal-body { padding: 20px 24px; }
+    .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex;
+                    justify-content: flex-end; gap: 8px; }
+    .form-group { margin-bottom: 16px; }
+    .form-label { display: block; font-size: 12px; font-weight: 600; color: var(--fg2);
+                  margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .form-input, .form-select, .form-textarea {
+      width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px;
+      font-size: 13px; font-family: inherit; background: var(--bg); color: var(--fg);
+      transition: border-color 0.15s; }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+    .form-textarea { resize: vertical; min-height: 80px; }
+    .btn-primary { background: var(--accent); color: #fff; border: 1px solid var(--accent);
+                   padding: 8px 20px; border-radius: 8px; font-size: 13px; font-weight: 600;
+                   cursor: pointer; font-family: inherit; transition: background 0.15s; }
+    .btn-primary:hover { background: var(--accent2); }
+    .btn-cancel { background: var(--bg); color: var(--fg2); border: 1px solid var(--border);
+                  padding: 8px 20px; border-radius: 8px; font-size: 13px; font-weight: 500;
+                  cursor: pointer; font-family: inherit; }
+    .btn-cancel:hover { background: var(--bg3); }
+  </style>
 </head>
 <body>
-  <div class="navbar-wrapper">
-  <!-- Wrap the .navbar in .container to center it within the absolutely positioned parent. -->
-    <div class="container">
 
-      <div class="navbar navbar-inverse">
-
-        <div class="navbar-inner">
-          <a style="font-family: Arial; font-style:italic; color:#0088CC" class="brand" href="/">Taski<b>f</b>y <sup>&alpha;</sup></a> &nbsp;
-          <ul class="nav">
-            <li><a id="score" href="#">Credits: 0</a></li>
-          </ul>
-          <ul class="nav">
-              <li class="dropdown">
-              <a class="dropdown-toggle" id="drop4" role="button" data-toggle="dropdown" href="#">Help<b class="caret"></b></a>
-              <ul id="menu1" class="dropdown-menu" role="menu" aria-labelledby="drop4">
-                <li><a href="/start.html">About</a></li>
-                <li class="divider"></li>
-                <li><a href="#" id="collaborate">Collaborate</a></li>
-              </ul>
-            </li>
-          </ul>
-
-          <ul class="nav pull-right">
-            <li class="dropdown">
-              <a id="user" >Login with WebID</a>
-            </li>
-
-          </ul>
-
-          <form class="form-inline pull-left" id="newtagform">
-<!--
-          <div class="btn-group input-append">
-            <input id="newtag" class="input-medium" size="32" type="text"><button class="btn btn-primary btn-mini"><i class="icon-plus-sign icon-white"></i><i class="icon-tag icon-white"></i></button>
-          </div>
--->
-          </form>
-          <div id="tags" class="btn-group pull-left">
-
-          </div>
-<!--
-          <div class="btn-group pull-right">
-            <button type="button" id="ui-focus" class="btn btn-success">Focus</button>
-          </div>
--->
-        </div>
-      </div>
-
+<div id="app">
+  <div id="sidebar-overlay" onclick="closeSidebar()"></div>
+  <nav id="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-icon">⚙️</div>
+      <span>Taskify</span>
     </div>
+    <div class="sb-nav">
+      <div class="sb-section">Overview</div>
+      <div class="sb-item active" data-nav="dashboard"><span class="sb-item-icon">📊</span> Dashboard</div>
+      <div class="sb-item" data-nav="activity"><span class="sb-item-icon">📡</span> Activity</div>
+      <div class="sb-section">Work</div>
+      <div class="sb-item" data-nav="issues"><span class="sb-item-icon">📋</span> Issues <span class="sb-count" id="sb-issues-count"></span></div>
+      <div class="sb-item" data-nav="projects"><span class="sb-item-icon">📁</span> Projects <span class="sb-count" id="sb-projects-count"></span></div>
+      <div class="sb-item" data-nav="goals"><span class="sb-item-icon">🎯</span> Goals</div>
+      <div class="sb-section">Team</div>
+      <div class="sb-item" data-nav="agents"><span class="sb-item-icon">🤖</span> Agents <span class="sb-count" id="sb-agents-count"></span></div>
+      <div class="sb-section">Settings</div>
+      <div class="sb-item" data-nav="settings"><span class="sb-item-icon">⚙️</span> Company</div>
+    </div>
+    <div class="sb-footer">Taskify v0.0.1 · LOSOS</div>
+  </nav>
+  <div id="main">
+    <div id="topbar"><button id="hamburger">☰</button><div id="breadcrumbs"></div><button id="sound-toggle" title="Enable notification sounds" style="background:none;border:none;font-size:16px;cursor:pointer;padding:8px 16px;color:var(--fg3)">🔇</button></div>
+    <div id="content"></div>
+    <div id="toasts"></div>
   </div>
+</div>
 
+<script type="module">
+// --- Data layer: try /db/ (MongoDB via JSS), fall back to demo data ---
+var DB = localStorage.getItem('taskify-db') || '/db/taskify'
+var LIVE = false
 
+async function fetchCollection(name) {
+  var listing = await fetch(DB + '/' + name + '/').then(function(r) { return r.json() })
+  var items = listing.contains || listing['ldp:contains'] || []
+  var urls = items.map(function(item) {
+    return typeof item === 'string' ? item : item['@id']
+  })
+  return Promise.all(urls.map(function(url) {
+    return fetch(url).then(function(r) { return r.json() }).then(function(doc) {
+      var parts = url.split('/')
+      doc.id = doc.id || parts[parts.length - 1]
+      return doc
+    })
+  }))
+}
 
-  <div class="container-fluid">
-    <div class="row-fluid" id="columns">
+async function loadData() {
+  var results = await Promise.all([
+    fetchCollection('agents'),
+    fetchCollection('issues'),
+    fetchCollection('projects'),
+    fetchCollection('goals'),
+    fetchCollection('activity'),
+    fetchCollection('company')
+  ])
+  var company = results[5][0] || { id: "c1", name: "Taskify", status: "active", issuePrefix: "TM" }
+  window.__paperclip = {
+    company: company,
+    agents: results[0],
+    issues: results[1],
+    projects: results[2],
+    goals: results[3],
+    activity: results[4]
+  }
+  LIVE = true
+}
 
-    </div>
-  </div>
-  <!-- Settings -->
-  <div id="settings" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="settingsLabel" aria-hidden="true">
-    <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-      <h3 id="settingsLabel">Settings</h3>
-    </div>
-    <div class="modal-body">
-      <p>Data Server Location: <form onSubmit='javascript:return false;'><input size="90" id="workspace"/></form></p>
-      <p>Credits Server Location: <form onSubmit='javascript:return false;'><input id="webcreditsuri"/></form></p>
+async function loadDemoData() {
+  window.__paperclip = await fetch('demo.json').then(function(r) { return r.json() })
+}
 
-    </div>
-    <div class="modal-footer">
-      <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-      <button onclick='saveSettings()' class="btn btn-primary">Save changes</button>
-    </div>
-  </div>
+document.getElementById('content').innerHTML = '<div class="loading">Loading...</div>'
+try {
+  await loadData()
+} catch (e) {
+  await loadDemoData()
+}
 
-  <!-- Boards -->
-  <div id="boards" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="boardsLabel" aria-hidden="true">
-    <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-      <h3 id="boardsLabel">Boards</h3>
-    </div>
-    <div class="modal-body">
-      <p id="boardlist">My Boards</p>
-      <p>Add a board (e.g. http://today.taskify.org/ )<form onSubmit='javascript:return false;'><input id="boarduri"/></form></p>
-    </div>
-    <div class="modal-footer">
-      <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-      <button onclick='saveBoards()' class="btn btn-primary">Save changes</button>
-    </div>
-  </div>
+// Sidebar counts
+var d = window.__paperclip
+document.getElementById('sb-agents-count').textContent = d.agents.length
+document.getElementById('sb-issues-count').textContent = d.issues.filter(function(i) { return i.status !== 'done' && i.status !== 'completed' }).length
+document.getElementById('sb-projects-count').textContent = d.projects.length
 
-  <a id="simple-menu" href="#sidr">Sidebar</a>
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open')
+  document.getElementById('sidebar-overlay').classList.remove('open')
+}
+document.getElementById('hamburger').addEventListener('click', function() {
+  document.getElementById('sidebar').classList.toggle('open')
+  document.getElementById('sidebar-overlay').classList.toggle('open')
+})
 
-  <div id="sidr">
-    <!-- Your content -->
-    <ul>
-    </ul>
-  </div>
+import { html, render } from './losos/html.js'
 
-  <script src="app/vendor/notie.js"></script>
-  <script src="app/vendor/rdflib.js/rdflib.js"></script>
-  <script src="app/vendor/solid.js"></script>
-  <script src="//code.jquery.com/jquery-1.8.2.js" type="text/javascript"></script>
-  <script src="//code.jquery.com/ui/1.9.0/jquery-ui.js" type="text/javascript"></script>
-  <script src="app/vendor/jquery.autosize.js" type="text/javascript"></script>
-  <script src="app/vendor/humane.min.js" type="text/javascript"></script>
+// ---- pane imports ----
+var panes = {}
+panes.dashboard = (await import('./panes/dashboard-pane.js')).default
+panes.agents = (await import('./panes/agents-pane.js')).default
+panes.agentDetail = (await import('./panes/agent-detail-pane.js')).default
+panes.issues = (await import('./panes/issues-pane.js')).default
+panes.issueDetail = (await import('./panes/issue-detail-pane.js')).default
+panes.projects = (await import('./panes/projects-pane.js')).default
+panes.projectDetail = (await import('./panes/project-detail-pane.js')).default
+panes.activity = (await import('./panes/activity-pane.js')).default
+panes.settings = (await import('./panes/settings-pane.js')).default
+panes.goals = (await import('./panes/goals-pane.js')).default
 
-  <script src="//raw.github.com/timrwood/moment/1.7.2/min/moment.min.js " type="text/javascript"></script>
+// ---- navigation ----
+var content = document.getElementById('content')
+var breadcrumbsEl = document.getElementById('breadcrumbs')
+var navStack = []
 
-  <script src="app/vendor/common.js"></script>
-  <script src="app/vendor/jquery.sidr.js" type="text/javascript"></script>
-  <script src="app/vendor/sha256.js"></script>  <!-- App -->
+function navigate(paneKey, label, context) {
+  var entry = { pane: paneKey, label: label, context: context || {} }
 
-  <script src="app/todo.js" type="text/javascript"></script>
-	<link rel="import" href="login.html">
+  // If navigating to a sidebar item, reset the stack
+  if (['dashboard','agents','issues','projects','activity','goals','settings'].indexOf(paneKey) !== -1) {
+    navStack = [entry]
+  } else {
+    navStack.push(entry)
+  }
 
-	<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+  renderContent()
+  renderBreadcrumbs()
+  updateSidebar(navStack[0].pane)
+}
 
+function navigateBack(toIndex) {
+  navStack = navStack.slice(0, toIndex + 1)
+  renderContent()
+  renderBreadcrumbs()
+  updateSidebar(navStack[0].pane)
+}
 
-<script src="https://togetherjs.com/togetherjs.js"></script>
-<script>
-TogetherJSConfig_getUserName = function () {return 'Taskify User';};
-document.getElementById("collaborate")
-  .addEventListener("click", TogetherJS, false);
+function renderContent() {
+  var current = navStack[navStack.length - 1]
+  // Use a fresh container to avoid LOSOS cache conflicts on re-render
+  var fresh = document.createElement('div')
+  content.innerHTML = ''
+  content.appendChild(fresh)
+  var pane = panes[current.pane]
+  if (pane && pane.render) {
+    try {
+      pane.render(null, null, fresh, current.context)
+    } catch (err) {
+      console.warn('[render] pane failed:', current.pane, err)
+      fresh.innerHTML = '<div class="empty">Render error — try refreshing</div>'
+    }
+  }
+}
+
+function renderBreadcrumbs() {
+  breadcrumbsEl.innerHTML = ''
+  navStack.forEach(function(entry, idx) {
+    if (idx > 0) {
+      var sep = document.createElement('span')
+      sep.className = 'bc-sep'
+      sep.textContent = '/'
+      breadcrumbsEl.appendChild(sep)
+    }
+    var span = document.createElement('span')
+    span.textContent = entry.label
+    if (idx === navStack.length - 1) {
+      span.className = 'bc-current'
+    } else {
+      span.addEventListener('click', function() { navigateBack(idx) })
+    }
+    breadcrumbsEl.appendChild(span)
+  })
+}
+
+function updateSidebar(activePane) {
+  document.querySelectorAll('.sb-item').forEach(function(el) {
+    el.classList.toggle('active', el.dataset.nav === activePane)
+  })
+}
+
+// Expose navigate globally so panes can use it
+window.__nav = navigate
+window.__loadData = loadData
+window.__setDB = function(path) {
+  DB = path
+  localStorage.setItem('taskify-db', path)
+  if (LIVE) connectWS()
+}
+window.__getDB = function() { return DB }
+window.__isLive = function() { return LIVE }
+
+// ---- sidebar clicks ----
+document.querySelectorAll('.sb-item').forEach(function(el) {
+  el.addEventListener('click', function() {
+    var labels = { dashboard: 'Dashboard', agents: 'Agents', issues: 'Issues',
+                   projects: 'Projects', activity: 'Activity', goals: 'Goals', settings: 'Settings' }
+    navigate(el.dataset.nav, labels[el.dataset.nav] || el.dataset.nav)
+    closeSidebar()
+  })
+})
+
+// ---- boot ----
+navigate('dashboard', 'Dashboard')
+
+// ---- live sync via WebSocket ----
+var _ws = null
+function connectWS() {
+  if (_ws) { _ws.onclose = null; _ws.close() }
+  _ws = new WebSocket((location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + location.host + '/.notifications')
+  _ws.onopen = function() { _ws.send('sub ' + location.origin + DB + '/') }
+  _ws.onmessage = async function(e) {
+    if (e.data.startsWith('pub ')) {
+      var pubUrl = e.data.slice(4)
+      var oldData = JSON.stringify(window.__paperclip)
+      try {
+        await loadData()
+        updateSidebarCounts()
+        renderContent()
+        // Detect what changed and toast it
+        var newData = JSON.stringify(window.__paperclip)
+        if (oldData !== newData) showChangeToast(pubUrl)
+      } catch (err) {
+        console.warn('[ws] reload failed:', err)
+      }
+    }
+  }
+  _ws.onclose = function() { setTimeout(connectWS, 3000) }
+}
+
+function updateSidebarCounts() {
+  var d = window.__paperclip
+  document.getElementById('sb-agents-count').textContent = d.agents.length
+  document.getElementById('sb-issues-count').textContent = d.issues.filter(function(i) { return i.status !== 'done' && i.status !== 'completed' }).length
+  document.getElementById('sb-projects-count').textContent = d.projects.length
+}
+
+var _audioCtx = null
+var _soundEnabled = false
+
+document.getElementById('sound-toggle').addEventListener('click', function() {
+  _soundEnabled = !_soundEnabled
+  if (_soundEnabled && !_audioCtx) {
+    _audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+  }
+  this.textContent = _soundEnabled ? '🔊' : '🔇'
+  this.title = _soundEnabled ? 'Mute notifications' : 'Enable notification sounds'
+  if (_soundEnabled) playNotificationSound()
+})
+
+function playNotificationSound() {
+  if (!_soundEnabled || !_audioCtx) return
+  try {
+    var osc = _audioCtx.createOscillator()
+    var gain = _audioCtx.createGain()
+    osc.connect(gain)
+    gain.connect(_audioCtx.destination)
+    osc.frequency.setValueAtTime(880, _audioCtx.currentTime)
+    osc.frequency.setValueAtTime(1047, _audioCtx.currentTime + 0.08)
+    gain.gain.setValueAtTime(0.15, _audioCtx.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.001, _audioCtx.currentTime + 0.25)
+    osc.start(_audioCtx.currentTime)
+    osc.stop(_audioCtx.currentTime + 0.25)
+  } catch (e) {}
+}
+
+function showToast(icon, message) {
+  var el = document.createElement('div')
+  el.className = 'toast'
+  el.innerHTML = '<span class="toast-icon">' + icon + '</span>' + message
+  document.getElementById('toasts').appendChild(el)
+  playNotificationSound()
+  setTimeout(function() { el.style.opacity = '0'; el.style.transition = 'opacity 0.3s'; setTimeout(function() { el.remove() }, 300) }, 4000)
+}
+
+function showChangeToast(url) {
+  var parts = url.split('/')
+  var type = parts[parts.length - 2] || ''
+  var id = parts[parts.length - 1] || ''
+
+  var icons = { agents: '🤖', issues: '📋', projects: '📁', goals: '🎯', activity: '📡', company: '⚙️' }
+  var icon = icons[type] || '🔔'
+
+  // Try to find the entity name
+  var data = window.__paperclip
+  var name = id
+  if (type === 'agents') {
+    var agent = data.agents.find(function(a) { return a.id === id })
+    if (agent) name = agent.name
+  } else if (type === 'issues') {
+    var issue = data.issues.find(function(i) { return i.id === id })
+    if (issue) name = (issue.identifier || '') + ' ' + (issue.title || '')
+  } else if (type === 'projects') {
+    var project = data.projects.find(function(p) { return p.id === id })
+    if (project) name = project.name
+  } else if (type === 'activity') {
+    var act = data.activity.find(function(a) { return a.id === id })
+    if (act) name = act.action.replace(/\./g, ' → ')
+  }
+
+  if (name.length > 60) name = name.slice(0, 57) + '...'
+  showToast(icon, '<strong>' + type.slice(0, -1) + '</strong> updated: ' + name)
+}
+
+if (LIVE) connectWS()
 </script>
+
 </body>
 </html>

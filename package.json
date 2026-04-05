@@ -1,0 +1,18 @@
+{
+  "name": "gettask",
+  "version": "0.0.1",
+  "description": "Orchestrate AI agents from a lightweight dashboard",
+  "type": "module",
+  "scripts": {
+    "start": "jss start --port 3005 --root . --mongo --mongo-database taskify --public --notifications",
+    "agent": "node agent.js"
+  },
+  "license": "AGPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/taskify/taskify.github.io.git"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^9.0.3"
+  }
+}
