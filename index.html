@@ -233,6 +233,9 @@
       <div class="sb-logo-icon">⚙️</div>
       <span>Taskify</span>
     </div>
+    <div id="company-switcher" style="padding:4px 16px 8px;border-bottom:1px solid var(--border)">
+      <select id="company-select" class="form-select" style="font-size:12px;padding:4px 8px;width:100%"></select>
+    </div>
     <div class="sb-nav">
       <div class="sb-section">Overview</div>
       <div class="sb-item active" data-nav="dashboard"><span class="sb-item-icon">📊</span> Dashboard</div>
@@ -416,10 +419,53 @@ window.__loadData = loadData
 window.__setDB = function(path) {
   DB = path
   localStorage.setItem('taskify-db', path)
+  addCompanyToList(path.replace(/^\/db\//, ''))
   if (LIVE) connectWS()
 }
 window.__getDB = function() { return DB }
 window.__isLive = function() { return LIVE }
+
+// ---- company list ----
+function getCompanyList() {
+  try { return JSON.parse(localStorage.getItem('taskify-companies')) || [] } catch(e) { return [] }
+}
+function addCompanyToList(name) {
+  var list = getCompanyList()
+  if (list.indexOf(name) === -1) { list.push(name); localStorage.setItem('taskify-companies', JSON.stringify(list)) }
+  renderCompanySelect()
+}
+function renderCompanySelect() {
+  var sel = document.getElementById('company-select')
+  var list = getCompanyList()
+  var current = DB.replace(/^\/db\//, '')
+  sel.innerHTML = list.map(function(c) {
+    return '<option value="' + c + '"' + (c === current ? ' selected' : '') + '>' + c + '</option>'
+  }).join('') + '<option value="__new">+ New company...</option>'
+}
+// Add current company to list
+addCompanyToList(DB.replace(/^\/db\//, ''))
+
+document.getElementById('company-select').addEventListener('change', async function() {
+  var val = this.value
+  if (val === '__new') {
+    var name = prompt('Company name (database):')
+    if (!name) { renderCompanySelect(); return }
+    val = name.trim()
+    addCompanyToList(val)
+  }
+  window.__setDB('/db/' + val)
+  try { await window.__loadData() } catch(e) {
+    window.__paperclip = {
+      company: { id: 'c1', name: val, status: 'active', issuePrefix: val.slice(0, 3).toUpperCase() },
+      agents: [], issues: [], projects: [], goals: [], activity: []
+    }
+  }
+  var d = window.__paperclip
+  document.getElementById('sb-agents-count').textContent = d.agents.length
+  document.getElementById('sb-issues-count').textContent = d.issues.filter(function(i) { return i.status !== 'done' && i.status !== 'completed' }).length
+  document.getElementById('sb-projects-count').textContent = d.projects.length
+  navigate('dashboard', 'Dashboard')
+})
 
 // ---- sidebar clicks ----
 document.querySelectorAll('.sb-item').forEach(function(el) {
