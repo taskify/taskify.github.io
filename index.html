@@ -257,7 +257,9 @@
 
 <script type="module">
 // --- Data layer: try /db/ (MongoDB via JSS), fall back to demo data ---
-var DB = localStorage.getItem('taskify-db') || '/db/taskify'
+var _urlCompany = new URLSearchParams(window.location.search).get('company')
+var DB = _urlCompany ? '/db/' + _urlCompany : (localStorage.getItem('taskify-db') || '/db/taskify')
+if (_urlCompany) localStorage.setItem('taskify-db', DB)
 var LIVE = false
 
 async function fetchCollection(name) {
