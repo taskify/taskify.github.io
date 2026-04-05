@@ -435,7 +435,7 @@ window.__setDB = function(input) {
   addCompanyToList(DB)
   if (LIVE) connectWS()
 }
-window.__getDB = function() { return DB }
+window.__getDB = function() { return DB.replace(/\/+$/, '') }
 window.__isLive = function() { return LIVE }
 
 // ---- company list ----
