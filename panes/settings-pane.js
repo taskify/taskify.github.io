@@ -61,6 +61,11 @@ export default {
           '<div class="card"><div style="display:grid;gap:16px">' +
             '<div class="form-group" style="margin:0"><label class="form-label">Company Name</label>' +
               '<input class="form-input" id="f-name" value="' + (company.name || '').replace(/"/g, '&quot;') + '"></div>' +
+            '<div class="form-group" style="margin:0"><label class="form-label">GitHub Org</label>' +
+              '<div class="row" style="gap:8px">' +
+                '<span class="text-muted text-sm" style="white-space:nowrap">github.com/</span>' +
+                '<input class="form-input" id="f-github-org" value="' + (company.githubOrg || '').replace(/"/g, '&quot;') + '" placeholder="e.g. taskify" style="font-family:monospace">' +
+              '</div></div>' +
             '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">' +
               '<div class="form-group" style="margin:0"><label class="form-label">Issue Prefix</label>' +
                 '<input class="form-input" id="f-prefix" value="' + (company.issuePrefix || '') + '" placeholder="e.g. NOS" maxlength="6"></div>' +
@@ -128,6 +133,7 @@ export default {
       if (!name) { nameEl.style.borderColor = 'var(--red)'; return }
 
       company.name = name
+      company.githubOrg = container.querySelector('#f-github-org').value.trim() || null
       company.issuePrefix = container.querySelector('#f-prefix').value.trim().toUpperCase() || company.issuePrefix
       company.status = container.querySelector('#f-status').value
       company.updatedAt = new Date().toISOString()

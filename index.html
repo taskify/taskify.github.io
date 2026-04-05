@@ -344,6 +344,7 @@ var navStack = []
 
 function navigate(paneKey, label, context) {
   var entry = { pane: paneKey, label: label, context: context || {} }
+  try { localStorage.setItem('taskify-pane', JSON.stringify(entry)) } catch(e) {}
 
   // If navigating to a sidebar item, reset the stack
   if (['dashboard','agents','issues','projects','activity','goals','settings'].indexOf(paneKey) !== -1) {
@@ -429,7 +430,10 @@ document.querySelectorAll('.sb-item').forEach(function(el) {
 })
 
 // ---- boot ----
-navigate('dashboard', 'Dashboard')
+var _saved = null
+try { _saved = JSON.parse(localStorage.getItem('taskify-pane')) } catch(e) {}
+if (_saved && _saved.pane) { navigate(_saved.pane, _saved.label, _saved.context) }
+else { navigate('dashboard', 'Dashboard') }
 
 // ---- live sync via WebSocket ----
 var _ws = null
