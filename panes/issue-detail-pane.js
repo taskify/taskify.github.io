@@ -207,6 +207,7 @@ export default {
                   <span class="text-xs text-muted">${timeAgo(c.createdAt)}</span>
                 </div>
                 <div class="md-comment" style="padding: 8px 12px; background: var(--bg2); border-radius: 6px; font-size: 13px; line-height: 1.5">${c.details.comment}</div>
+                ${c.details.usage || c.details.durationMs ? html`<div class="text-xs text-muted" style="margin-top: 4px; padding: 0 12px">${c.details.usage ? c.details.usage.total_tokens + ' tokens' : ''}${c.details.usage && c.details.durationMs ? ' · ' : ''}${c.details.durationMs ? (c.details.durationMs / 1000).toFixed(1) + 's' : ''}</div>` : ''}
               </div>`
             })}
           </div>
